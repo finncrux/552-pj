@@ -1,0 +1,78 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/altera_lite/16.0
+vCLA
+Z0 !s110 1570911586
+!i10b 1
+!s100 j?IVnj4kCE^R>U8C0bnXn1
+IBIfhS95l0Rh`4;i6DQ^bS2
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+Z2 dC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1
+w1570910674
+8C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
+FC:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
+L0 1
+Z3 OV;L;10.4d;61
+r1
+!s85 0
+31
+Z4 !s108 1570911586.000000
+!s107 C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v|
+!i113 1
+o-work work
+n@c@l@a
+vCLA_tb
+Z5 DXx6 sv_std 3 std 0 22 WmjPaeP=7F5?QFXzJ>D[Q2
+!s110 1570912123
+!i10b 1
+!s100 hV^ZiJzbimYXMRm53PU1l3
+ImKjTJ@QGOGUF4XK3>e6UB2
+R1
+!s105 CLA_tb_sv_unit
+S1
+R2
+w1570912084
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1570912123.000000
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv|
+!i113 1
+Z6 o-work work -sv
+n@c@l@a_tb
+vfull_adder_1bit
+R5
+R0
+!i10b 1
+!s100 8QL1>@@gE7l]8aZAS^FzI1
+IG@^]?[Fh56`fD[8AD7GR_1
+R1
+!s105 full_adder_1bit_sv_unit
+S1
+R2
+w1570910500
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv|
+!i113 1
+R6
