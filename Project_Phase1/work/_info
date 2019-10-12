@@ -8,30 +8,90 @@ z2
 !i10f 100
 cModel Technology
 dC:/altera_lite/16.0
-vCLA
-Z0 !s110 1570911586
+vaddsub_16bit
+Z0 !s110 1570917131
 !i10b 1
-!s100 j?IVnj4kCE^R>U8C0bnXn1
-IBIfhS95l0Rh`4;i6DQ^bS2
+!s100 Dz98W^^VfdL5J15lMT7kK0
+IaLJfM7o<I=O7HHCPQ?@Go2
 Z1 VDg1SIo80bB@j0V0VzS_@n1
 Z2 dC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1
-w1570910674
-8C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
-FC:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
+w1570916731
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v
 L0 1
 Z3 OV;L;10.4d;61
 r1
 !s85 0
 31
-Z4 !s108 1570911586.000000
+Z4 !s108 1570917131.000000
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v|
+!i113 1
+Z5 o-work work
+vaddsub_16bit_tb
+R0
+!i10b 1
+!s100 >aWZ67>1bloUmY64HXa;X2
+IDfYUG1jSeiYEc@_hd5kS<0
+R1
+R2
+w1570917113
+Z6 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v
+Z7 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v|
+Z8 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v|
+!i113 1
+R5
+vaddsub_4bit_tb
+!s110 1570917019
+!i10b 1
+!s100 QghOUhLm9457W`bb?F5Ol0
+IcIAK8K3bPMh=1@IZ3CY;;2
+R1
+R2
+w1570916986
+R6
+R7
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1570917018.000000
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v|
+R8
+!i113 1
+R5
+vCLA
+R0
+!i10b 1
+!s100 :i1DZH6GojGe[g<0MN3783
+Ia89S2aGOOdmn[=098ik230
+R1
+R2
+w1570916062
+8C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
+FC:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
 !s107 C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v|
 !i113 1
-o-work work
+R5
 n@c@l@a
 vCLA_tb
-Z5 DXx6 sv_std 3 std 0 22 WmjPaeP=7F5?QFXzJ>D[Q2
-!s110 1570912123
+Z9 DXx6 sv_std 3 std 0 22 WmjPaeP=7F5?QFXzJ>D[Q2
+R0
 !i10b 1
 !s100 hV^ZiJzbimYXMRm53PU1l3
 ImKjTJ@QGOGUF4XK3>e6UB2
@@ -47,14 +107,14 @@ R3
 r1
 !s85 0
 31
-!s108 1570912123.000000
+R4
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv|
 !i113 1
-Z6 o-work work -sv
+Z10 o-work work -sv
 n@c@l@a_tb
 vfull_adder_1bit
-R5
+R9
 R0
 !i10b 1
 !s100 8QL1>@@gE7l]8aZAS^FzI1
@@ -75,4 +135,4 @@ R4
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv|
 !i113 1
-R6
+R10

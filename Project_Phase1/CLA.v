@@ -21,7 +21,7 @@ assign cin2 = g1|(p1&cin1);
 assign cin3 = g2|(p2&cin2);
 assign COUT = g3|(p3&cin3);
 
-assign OVFL = (A[3]&B[3]&(!SUM[3]))|(!A[3]&!B[3]&SUM[3]);
+assign OVFL = COUT^cin3;
 
 full_adder_1bit FA0 (.a(A[0]),.b(B[0]),.result(SUM[0]),.cin(cin0),.cout(cout0));
 full_adder_1bit FA1 (.a(A[1]),.b(B[1]),.result(SUM[1]),.cin(cin1),.cout(cout1));
