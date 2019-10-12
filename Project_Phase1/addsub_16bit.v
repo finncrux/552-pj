@@ -14,6 +14,6 @@ CLA c2(.A(A[7:4]),.B(real_B[7:4]),.SUM(SUM_CAL[7:4]),.OVFL(ovfl2),.CIN(cin1),.CO
 CLA c3(.A(A[11:8]),.B(real_B[11:8]),.SUM(SUM_CAL[11:8]),.OVFL(ovfl3),.CIN(cin2),.COUT(cin3));
 CLA c4(.A(A[15:12]),.B(real_B[15:12]),.SUM(SUM_CAL[15:12]),.OVFL(ovfl_final),.CIN(cin3),.COUT(cout4));
 
-assign SUM = ovfl_final? (SUM[15] ? 16'h7fff : 16'h8000) : SUM_CAL;
+assign SUM = ovfl_final? (SUM_CAL[15] ? 16'h7fff : 16'h8000) : SUM_CAL;
 
 endmodule
