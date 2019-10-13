@@ -1,4 +1,9 @@
-module CLA(A,B,SUM,OVFL,CIN,COUT);
+module CLA(A,B,SUM,OVFL,CIN,COUT); 
+
+///////////////////////
+/////tested
+///////////////////////
+
 input [3:0] A, B;
 output[3:0] SUM;
 input CIN;

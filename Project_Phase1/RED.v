@@ -1,4 +1,9 @@
 module RED(A,B,SUM);
+
+///////////////////////
+/////tested
+///////////////////////
+
 input [15:0] A,B;
 output [15:0] SUM;
 wire [7:0] Sum0,Sum1;

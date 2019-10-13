@@ -1,5 +1,9 @@
 module addsub_16bit(A, B, SUM, sub);
 
+///////////////////////
+/////tested
+///////////////////////
+
 input sub;
 input [15:0]A, B;
 output [15:0]SUM;
