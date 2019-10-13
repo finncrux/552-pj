@@ -27,8 +27,7 @@ assign temp9 = shift_val[1]? {temp8[1:0], temp8[15:2]} : temp8;
 assign res3 =  shift_val[0]? {temp9[0], temp9[15:1]} : temp9;
 
 assign shift_out =  (!opcode[0] & !opcode[1]) ? res1 :
-                    (!opcode[1] & opcode[0])  ? res2 :
-                    (!opcode[0] & opcode[1])  ? res3 : {shift_in[15:1], 1'b1};
+                    (!opcode[1] & opcode[0])  ? res2 : res3;
 
 assign zero = !(|shift_out);
 
