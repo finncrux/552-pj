@@ -1,4 +1,6 @@
-module RegisterFile(input clk, input rst, input [3:0] SrcReg1, input [3:0] SrcReg2, input [3:0] DstReg, input WriteReg, input [15:0] DstData, inout [15:0] SrcData1, inout [15:0] SrcData2);
+module RegisterFile(input clk, input rst, input [3:0] SrcReg1, input [3:0] SrcReg2, 
+                    input [3:0] DstReg, input WriteReg, input [15:0] DstData, 
+                    inout [15:0] SrcData1, inout [15:0] SrcData2);
 wire[15:0] WrtEn,RdEn1,RdEn2;
 ReadDecoder_4_16 RDcoder1(.RegId(SrcReg1), .Wordline(RdEn1));
 ReadDecoder_4_16 RDcoder2(.RegId(SrcReg2), .Wordline(RdEn2));
