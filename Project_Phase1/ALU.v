@@ -10,7 +10,7 @@ output OVFL;
 wire[15:0] result_ADDSUB,result_PADDSB,result_RED,result_SHIFTER;
 
 RED redder(.A(A),.B(B),.SUM(result_RED));
-addsub_16bit adder(.A(A), .B((opocode[3:1] == 3'b100)?({{11{I[3]}},I[3:0],1'b0}):B), .SUM(result_ADDSUB), .sub(opocode == 4'b0001).ovfl(OVFL));
+addsub_16bit adder(.A(A), .B((opocode[3:1] == 3'b100)?({{11{I[3]}},I[3:0],1'b0}):B), .SUM(result_ADDSUB), .sub(opocode == 4'b0001),.ovfl(OVFL));
 PADDSB padder(.A(A),.B(B),.RES(result_PADDSB));
 shifter shifter(.opcode(opocode), .shift_in(A), .shift_out(result_SHIFTER), .shift_val(I[3:0]));// need varify
 
