@@ -22,12 +22,21 @@ wire[15:0] A,B,RES;
 wire[7:0] I;
 ALU alu (.A(A),.B(B),.I(I),.RES(RES),.opocode(OPOCODE));
 
-// register file
+
+// PC register
 
 // decoder
 wire[15:0] PC_Reg_OUT;
-decoder decoder(.instruction(PC_Reg_OUT), .opcode(OPOCODE), rs, rt, rd, immediate_8bit, offset_4bit, 
-                offset_9bit, condition, writem_en, writer_en, halt);
+wire[3:0] rs,rt,rd;
+wire writer_en,writem_en,halt
+wire [8:0] offset_9bit;
+decoder decoder(.instruction(PC_Reg_OUT), .opcode(OPOCODE), .rs(rs), .rt(rt), .rd(rd), 
+.immediate_8bit(I), offset_9bit(offset_9bit), condition, .writem_en(writem_en), .writer_en(writer_en), .halt(halt));
+// register file
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), 
+                    .DstReg(rd), .WriteReg(writer_en), .DstData(RES), 
+                    .SrcData1(A), .SrcData2(B))
+
 // write back (register, memory) logic
 
 endmodule
