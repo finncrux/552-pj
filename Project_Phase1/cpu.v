@@ -28,7 +28,7 @@ wire[2:0] CONDITION ,FLAG;
 wire[15:0] PCS;
 PC PC(.clk(clk), .rst(!rst_n),
             .Condition(CONDITION),.Imm(immediate_8bit), .Flag(FLAG), 
-            .PC_addr(PC_ADDR).PCS(PCS));
+            .PC_addr(PC_ADDR),.PCS(PCS));
 
 // Flag register
 wire[2:0] FlagFromAlu;

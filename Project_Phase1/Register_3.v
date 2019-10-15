@@ -1,4 +1,4 @@
-module Register_3.v(Q,D,clk,rst,WriteEnableN,WriteEnableZ,WriteEnableV);
+module Register_3(Q,D,clk,rst,WriteEnableN,WriteEnableZ,WriteEnableV);
 input[2:0] Q;
 output[2:0] D;
 input clk,rst,WriteEnableN,WriteEnableZ,WriteEnableV;

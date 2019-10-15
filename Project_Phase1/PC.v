@@ -1,6 +1,6 @@
 module PC(input clk, input rst,
             input[2:0] Condition, input[8:0] Imm, input [2:0] Flag, 
-            output [15:0] PC_addr output[15:0] PCS);
+            output [15:0] PC_addr, output[15:0] PCS);
 
 wire [15:0] PC_out,dead_line;
 wire rd_en, wt_en, dead;
