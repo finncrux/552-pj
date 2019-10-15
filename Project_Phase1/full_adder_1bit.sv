@@ -1,4 +1,4 @@
-module full_adder_1bit(a,b,result,cin,cout);
+module full_adder_1bit(a,b,result,cin);
 input a,b,cin;
 output result;
 output cout;
