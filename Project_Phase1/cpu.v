@@ -9,7 +9,7 @@ wire[3:0] OPOCODE;//opocode
 wire[15:0] A,B,RES;
 wire[7:0] I;
 wire ALU_OVFL;
-ALU alu (.A(A),.B(B),.I(I),.RES(RES),.opocode(OPOCODE).OVFL(ALU_OVFL));
+ALU alu (.A(A),.B(B),.I(I),.RES(RES),.opocode(OPOCODE),.OVFL(ALU_OVFL));
 
 // memory system
 wire[15:0]PC_IN,PC_OUT,DATA_IN,DATA_OUT,PC_ADDR,DATA_ADDR;
@@ -29,7 +29,7 @@ assign FlagFromAlu = {(RES[15]==1),(RES==0),(ALU_OVFL)};
 assign WriteEnableN =!(|OPOCODE[3:1]);
 assign WriteEnableZ = WriteEnableN|(OPOCODE==4'b0010)|(OPOCODE==4'b0100)|(OPOCODE==4'b0101)|(OPOCODE==4'b0110);
 assign WriteEnableV =!(|OPOCODE[3:1]);
-module Register_3.v(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN)
+Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN)
 ,.WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
 
 // decoder
