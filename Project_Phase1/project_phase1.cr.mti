@@ -1,9 +1,23 @@
-{C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v} {1 {vlog -work work -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v}
+{C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v} {1 {vlog -work work -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v}
+Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
+-- Compiling module shifter
+
+Top level modules:
+	shifter
+
+} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v} {1 {vlog -work work -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v}
 Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
 -- Compiling module addsub_16bit_tb
 
 Top level modules:
 	addsub_16bit_tb
+
+} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v} {1 {vlog -work work -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v}
+Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
+-- Compiling module decoder
+
+Top level modules:
+	decoder
 
 } {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter_tb.v} {1 {vlog -work work -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter_tb.v}
 Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
@@ -12,19 +26,12 @@ Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
 Top level modules:
 	shifter_tb
 
-} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v} {1 {vlog -work work -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v}
+} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv} {1 {vlog -work work -sv -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv}
 Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
--- Compiling module addsub_16bit
+-- Compiling module full_adder_1bit
 
 Top level modules:
-	addsub_16bit
-
-} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA.v} {1 {vlog -work work -stats=none {C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v}
-Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
--- Compiling module CLA
-
-Top level modules:
-	CLA
+	full_adder_1bit
 
 } {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv} {1 {vlog -work work -sv -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv}
 Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
@@ -33,11 +40,18 @@ Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
 Top level modules:
 	CLA_tb
 
-} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv} {1 {vlog -work work -sv -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv}
+} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA.v} {1 {vlog -work work -stats=none {C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v}
 Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
--- Compiling module full_adder_1bit
+-- Compiling module CLA
 
 Top level modules:
-	full_adder_1bit
+	CLA
+
+} {} {}} {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v} {1 {vlog -work work -stats=none {C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v}
+Model Technology ModelSim ALTERA vlog 10.4d Compiler 2015.12 Dec 30 2015
+-- Compiling module addsub_16bit
+
+Top level modules:
+	addsub_16bit
 
 } {} {}}

@@ -113,6 +113,46 @@ R5
 !i113 1
 Z12 o-work work -sv
 n@c@l@a_tb
+vdecoder
+!s110 1571164295
+!i10b 1
+!s100 cKzJLd7mBYBE;eH>EZ<[`3
+I0YfIRPkoDh4SLU8S[8^RF2
+R1
+R2
+w1571164280
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v
+L0 1
+R4
+r1
+!s85 0
+31
+!s108 1571164295.000000
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v|
+!i113 1
+R6
+vdecoder_tb
+!s110 1571164373
+!i10b 1
+!s100 W]ebS=4Qej;@HnbckLeDZ1
+IFGNMCcGT>Q`<2c0olkVze0
+R1
+R2
+w1571164367
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v
+L0 1
+R4
+r1
+!s85 0
+31
+!s108 1571164373.000000
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v|
+!i113 1
+R6
 vfull_adder_1bit
 R11
 R0
@@ -137,13 +177,13 @@ R5
 !i113 1
 R12
 vshifter
-R0
+!s110 1571163718
 !i10b 1
-!s100 z99:JMh]mH6GQn^z::E<j2
-I`_><RffB0XkR9Un8IKCFN1
+!s100 f85jjk9co=o@][ag0hA2Q1
+Iz5eAkdThHakgbfM:gL``W2
 R1
 R2
-w1570998324
+w1570999265
 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v
 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v
 L0 1
@@ -151,7 +191,7 @@ R4
 r1
 !s85 0
 31
-R5
+!s108 1571163718.000000
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v|
 !i113 1
