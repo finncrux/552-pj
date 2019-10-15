@@ -24,13 +24,13 @@ memory_I InstructionMem (.data_out(PC_OUT), .data_in(PC_IN), .addr(PC_ADDR), .en
 memory_D DataMed        (.data_out(DATA_OUT), .data_in(DATA_IN), .addr(DATA_ADDR), .enable(DATA_RD), .wr(DATA_WE), .clk(clk), .rst(!rst_n));
 
 // PC system
-wire[2:0] CONDITION;
+wire[2:0] CONDITION ,FLAG;
 PC PC(.clk(clk), .rst(!rst_n),
-            .Condition(CONDITION),Imm(immediate_8bit), .Flag(FLAG), 
+            .Condition(CONDITION),.Imm(immediate_8bit), .Flag(FLAG), 
             .PC_addr(PC_ADDR));
 
 // Flag register
-wire[2:0] FlagFromAlu,FLAG;
+wire[2:0] FlagFromAlu;
 assign FlagFromAlu = {(RES[15]==1),(RES==0),(ALU_OVFL)};
 assign WriteEnableN =!(|OPOCODE[3:1]);
 assign WriteEnableZ = WriteEnableN|(OPOCODE==4'b0010)|(OPOCODE==4'b0100)|(OPOCODE==4'b0101)|(OPOCODE==4'b0110);
