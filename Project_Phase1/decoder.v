@@ -11,7 +11,7 @@ output [8:0] offset_9bit;
 output halt, writem_en, writer_en;
 
 assign writem_en = (opcode == 4'b1001);
-assign writer_en = !((opcode == 4'b1001) || (opcode[3] & opcode[2]));
+assign writer_en = (rd !== 4'b0000) && (!((opcode == 4'b1001) || (opcode[3] & opcode[2])));
 assign opcode = instruction[15:12];
 assign halt = (opcode == 4'b1111);
 assign rd = instruction[11:8];
