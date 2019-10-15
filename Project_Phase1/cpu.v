@@ -16,4 +16,18 @@ assign DATA_WE = DATA_RD&OPOCODE[0];
 assign DATA_RD = OPOCODE[3]&!OPOCODE[2]&!OPOCODE[1];
 memory_I InstructionMem (.data_out(PC_OUT), .data_in(PC_IN), .addr(PC_ADDR), .enable(PC_RD), .wr(PC_WE), .clk(clk), .rst(!rst_n));
 memory_D DataMed        (.data_out(DATA_OUT), .data_in(DATA_IN), .addr(DATA_ADDR), .enable(DATA_RD), .wr(DATA_WE), .clk(clk), .rst(!rst_n));
+
+// Processing Unit
+wire[15:0] A,B,RES;
+wire[7:0] I;
+ALU alu (.A(A),.B(B),.I(I),.RES(RES),.opocode(OPOCODE));
+
+// register file
+
+// decoder
+wire[15:0] PC_Reg_OUT;
+decoder decoder(.instruction(PC_Reg_OUT), .opcode(OPOCODE), rs, rt, rd, immediate_8bit, offset_4bit, 
+                offset_9bit, condition, writem_en, writer_en, halt);
+// write back (register, memory) logic
+
 endmodule
