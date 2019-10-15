@@ -13,6 +13,7 @@ initial begin
         A = $random % 16'hffff;
         B = $random % 16'hffff;
         #5;
+    end
 end
 
 endmodule

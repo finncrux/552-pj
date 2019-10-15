@@ -25,9 +25,10 @@ memory_D DataMed        (.data_out(DATA_OUT), .data_in(DATA_IN), .addr(DATA_ADDR
 
 // PC system
 wire[2:0] CONDITION ,FLAG;
+wire[15:0] PCS;
 PC PC(.clk(clk), .rst(!rst_n),
             .Condition(CONDITION),.Imm(immediate_8bit), .Flag(FLAG), 
-            .PC_addr(PC_ADDR));
+            .PC_addr(PC_ADDR),.PCS(PCS));
 
 // Flag register
 wire[2:0] FlagFromAlu;
@@ -39,15 +40,16 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 ,.WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
 
 // decoder
-wire[15:0] PC_Reg_OUT;
+wire[15:0] PC_Reg_OUT,REG_DATA;
 wire[3:0] rs,rt,rd;
 wire writer_en,writem_en,halt;
 wire [8:0] offset_9bit;
+assign REG_DATA = (OPOCODE ==4'b1110)?PCS:RES;
 decoder decoder(.instruction(PC_Reg_OUT), .opcode(OPOCODE), .rs(rs), .rt(rt), .rd(rd), 
 .immediate_8bit(I), .offset_9bit(offset_9bit), .condition(CONDITION), .writem_en(writem_en), .writer_en(writer_en), .halt(halt));
 // register file
 RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), 
-                    .DstReg(rd), .WriteReg(writer_en), .DstData(RES), 
+                    .DstReg(rd), .WriteReg(writer_en), .DstData(REG_DATA), 
                     .SrcData1(A), .SrcData2(B));
 assign DATA_WE = writem_en; // enable memory write
 // write back (register, memory) logic
