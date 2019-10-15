@@ -1,4 +1,4 @@
-module PV(input clk, input, rst,
+module PC(input clk, input rst,
             input[2:0] Condition, input[8:0] Imm, input [2:0] Flag, 
             output [15:0] PC_addr);
 
