@@ -1,36 +1,19 @@
-module CLA(A,B,SUM,OVFL,CIN,COUT); 
+module CLA_4bit(input[3:0] A, input[3:0] B, input Cin, output[3:0] S, output G, output P, output Ovfl);
 
-///////////////////////
-/////tested
-///////////////////////
+wire g0,g1,g2,g3,p0,p1,p2,p3,c1,c2,c3,Cout;
 
-input [3:0] A, B;
-output[3:0] SUM;
-input CIN;
-output OVFL,COUT;
-wire p0,p1,p2,p3, g0,g1,g2,g3, cout0,cout1,cout2,cout3, cin0,cin1,cin2,cin3;
+assign P = p0 & p1 & p2 & p3;
+assign G = g3 | p3&g2 | p3&p2&g1 | p3&p2&p1&g0;
+assign c1 = g0 | p0&Cin;
+assign c2 = g1 | p1&g0 | p1&p0&Cin;
+assign c3 = g2 | p2&g1 | p2&p1&g0 | p2&p1&p0&Cin;
+assign Cout = g3 | p3&g2 | p3&p2&g1 | p3&p2&p1&g0 | p3&p2&p1&p0&Cin;
 
-assign p0 = A[0]^B[0];
-assign p1 = A[1]^B[1];
-assign p2 = A[2]^B[2];
-assign p3 = A[3]^B[3];
+assign Ovfl = Cout^c3;
 
-assign g0 = A[0]&B[0];
-assign g1 = A[1]&B[1];
-assign g2 = A[2]&B[2];
-assign g3 = A[3]&B[3];
-
-assign cin0 = CIN;
-assign cin1 = g0|(p0&cin0);
-assign cin2 = g1|(p1&cin1);
-assign cin3 = g2|(p2&cin2);
-assign COUT = g3|(p3&cin3);
-
-assign OVFL = COUT^cin3;
-
-full_adder_1bit FA0 (.a(A[0]),.b(B[0]),.result(SUM[0]),.cin(cin0),.cout(cout0));
-full_adder_1bit FA1 (.a(A[1]),.b(B[1]),.result(SUM[1]),.cin(cin1),.cout(cout1));
-full_adder_1bit FA2 (.a(A[2]),.b(B[2]),.result(SUM[2]),.cin(cin2),.cout(cout2));
-full_adder_1bit FA3 (.a(A[3]),.b(B[3]),.result(SUM[3]),.cin(cin3),.cout(cout3));
+PFA pfa0(.a(A[0]), .b(B[0]), .cin(Cin), .s(S[0]), .g(g0), .p(p0));
+PFA pfa1(.a(A[1]), .b(B[1]), .cin(c1), .s(S[1]), .g(g1), .p(p1));
+PFA pfa2(.a(A[2]), .b(B[2]), .cin(c2), .s(S[2]), .g(g2), .p(p2));
+PFA pfa3(.a(A[3]), .b(B[3]), .cin(c3), .s(S[3]), .g(g3), .p(p3));
 
 endmodule
