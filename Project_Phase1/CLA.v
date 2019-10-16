@@ -1,6 +1,6 @@
-module CLA_4bit(input[3:0] A, input[3:0] B, input Cin, output[3:0] S, output G, output P, output Ovfl);
+module CLA_4bit(input[3:0] A, input[3:0] B, input Cin, output[3:0] S, output G, output P, output Ovfl, output Cout);
 
-wire g0,g1,g2,g3,p0,p1,p2,p3,c1,c2,c3,Cout;
+wire g0,g1,g2,g3,p0,p1,p2,p3,c1,c2,c3;
 
 assign P = p0 & p1 & p2 & p3;
 assign G = g3 | p3&g2 | p3&p2&g1 | p3&p2&p1&g0;
