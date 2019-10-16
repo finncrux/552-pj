@@ -10,9 +10,7 @@ assign rd_en = 1'b1;
 assign wt_en = 1'b1;
 
 PC_control pc_ctrl(.C(Condition),.I(Imm),.F(Flag),.PC_in(PC_addr),.PC_out(PC_out));
-Register pc_reg(.clk(clk), .rst(rst), .D(PC_out), .WriteReg(wt_en), 
-                .ReadEnable1(rd_en), .ReadEnable2(dead), .Bitline1(PC_addr), .Bitline2(dead_line));
-
+pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_in), .PC_out(PC_out));
 
 
 endmodule
