@@ -9,57 +9,57 @@ z2
 cModel Technology
 dC:/altera_lite/16.0
 vaddsub_16bit
-!s110 1571177447
+Z0 !s110 1571188193
 !i10b 1
 !s100 mOTlL>JTCgK<=bUBg6CF>1
 IcP;bGcnN;=lMFVLa<M0_e2
-Z0 VDg1SIo80bB@j0V0VzS_@n1
-Z1 dC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1
-w1571177442
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+Z2 dC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1
+w1571178026
 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v
 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v
 L0 1
-Z2 OV;L;10.4d;61
+Z3 OV;L;10.4d;61
 r1
 !s85 0
 31
-!s108 1571177447.000000
+Z4 !s108 1571188193.000000
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit.v|
 !i113 1
-Z3 o-work work
+Z5 o-work work
 vaddsub_16bit_tb
-Z4 !s110 1570998570
+R0
 !i10b 1
 !s100 `nBIijIR6AEF4>Tg19P;H0
 InilE47Y7b=fiUhbAND_AV3
-R0
 R1
-w1570918292
-Z5 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v
-Z6 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v
-L0 1
 R2
+w1570918292
+Z6 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v
+Z7 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v
+L0 1
+R3
 r1
 !s85 0
 31
-Z7 !s108 1570998570.000000
+R4
 Z8 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v|
 Z9 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/addsub_16bit_tb.v|
 !i113 1
-R3
+R5
 vaddsub_4bit_tb
 !s110 1570917019
 !i10b 1
 !s100 QghOUhLm9457W`bb?F5Ol0
 IcIAK8K3bPMh=1@IZ3CY;;2
-R0
 R1
-w1570916986
-R5
-R6
-L0 1
 R2
+w1570916986
+R6
+R7
+L0 1
+R3
 r1
 !s85 0
 31
@@ -67,152 +67,575 @@ r1
 R8
 R9
 !i113 1
-R3
-vCLA
-R4
-!i10b 1
-!s100 HAmC32o]?;CzdG?hjPgaQ2
-IQh0Uig[1Ijn3GdgW_<SXI3
+R5
+vALU
 R0
+!i10b 1
+!s100 XBI_l_IifWE5V`mN04ET@3
+I@:FojR6`F`TkgNiXoGZ[m1
 R1
-w1570997748
-8C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
-FC:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v
-L0 1
 R2
+Z10 w1571177795
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU.v
+L0 4
+R3
 r1
 !s85 0
 31
-R7
-!s107 C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v|
-!s90 -reportprogress|300|-work|work|-stats=none|C:\Users\Alex Wang\Documents\GitHub\552-pj\Project_Phase1\CLA.v|
+R4
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU.v|
 !i113 1
+R5
+n@a@l@u
+vALU_tb
+Z11 DXx6 sv_std 3 std 0 22 WmjPaeP=7F5?QFXzJ>D[Q2
+R0
+!i10b 1
+!s100 ?b_X8TiH?dQT`W5iC>Wlf1
+In^GBNKXLgL^d8IOADH@6:1
+R1
+!s105 ALU_tb_sv_unit
+S1
+R2
+Z12 w1571163261
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU_tb.sv
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU_tb.sv
+L0 1
 R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU_tb.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ALU_tb.sv|
+!i113 1
+Z13 o-work work -sv
+n@a@l@u_tb
+vBitCell
+R0
+!i10b 1
+!s100 [VCBkSf=6QCEaoFb_TdLd3
+ISeWe::kR4`IoA2WOfUL=b2
+R1
+R2
+Z14 w1571166283
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/BitCell.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/BitCell.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/BitCell.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/BitCell.v|
+!i113 1
+R5
+n@bit@cell
+vCLA
+R0
+!i10b 1
+!s100 HAmC32o]?;CzdG?hjPgaQ2
+Ig]TLM7jP<<;gH1H^1BjXn1
+R1
+R2
+w1571178029
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA.v|
+!i113 1
+R5
 n@c@l@a
 vCLA_tb
-Z10 DXx6 sv_std 3 std 0 22 WmjPaeP=7F5?QFXzJ>D[Q2
-R4
+R11
+R0
 !i10b 1
 !s100 hV^ZiJzbimYXMRm53PU1l3
 ImKjTJ@QGOGUF4XK3>e6UB2
-R0
+R1
 !s105 CLA_tb_sv_unit
 S1
-R1
+R2
 w1570912084
 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv
 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv
 L0 1
-R2
+R3
 r1
 !s85 0
 31
-R7
+R4
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/CLA_tb.sv|
 !i113 1
-Z11 o-work work -sv
+R13
 n@c@l@a_tb
+vcpu
+R0
+!i10b 1
+!s100 :4W<e2^VgK7C6BLH4z[gE0
+IS;_KkY_jc?d=YMlzcDV9N0
+R1
+R2
+Z15 w1571179186
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/cpu.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/cpu.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/cpu.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/cpu.v|
+!i113 1
+R5
 vdecoder
-!s110 1571177372
+Z16 !s110 1571188194
 !i10b 1
 !s100 Ge:a;CBli0Z2U:3=Z9:Ek3
 ITD:[=QVFGWz^jUZj=^I@P1
-R0
 R1
+R2
 w1571174691
 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v
 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v
 L0 1
-R2
+R3
 r1
 !s85 0
 31
-!s108 1571177372.000000
+Z17 !s108 1571188194.000000
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder.v|
 !i113 1
-R3
+R5
 vdecoder_tb
-!s110 1571164373
+R16
 !i10b 1
 !s100 W]ebS=4Qej;@HnbckLeDZ1
 IFGNMCcGT>Q`<2c0olkVze0
-R0
 R1
+R2
 w1571164367
 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v
 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v
 L0 1
-R2
+R3
 r1
 !s85 0
 31
-!s108 1571164373.000000
+R17
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/decoder_tb.v|
 !i113 1
-R3
-vfull_adder_1bit
-R10
-R4
+R5
+vdff
+R16
 !i10b 1
-!s100 8QL1>@@gE7l]8aZAS^FzI1
-IG@^]?[Fh56`fD[8AD7GR_1
-R0
-!s105 full_adder_1bit_sv_unit
-S1
+!s100 PV_CoVVQ]?nI;J@mj=Gn=3
+I>gHh6d5DS?NHbX?1Lj;H<0
 R1
-w1570910500
-8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv
-FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv
-L0 1
 R2
+R14
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/D-Flip-Flop.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/D-Flip-Flop.v
+L0 3
+R3
 r1
 !s85 0
 31
-R7
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/D-Flip-Flop.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/D-Flip-Flop.v|
+!i113 1
+R5
+vfull_adder_1bit
+R11
+R16
+!i10b 1
+!s100 8QL1>@@gE7l]8aZAS^FzI1
+IG@^]?[Fh56`fD[8AD7GR_1
+R1
+!s105 full_adder_1bit_sv_unit
+S1
+R2
+w1571188187
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv
+L0 1
+R3
+r1
+!s85 0
+31
+R17
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/full_adder_1bit.sv|
 !i113 1
+R13
+vmemory1c
+R16
+!i10b 1
+!s100 z?Z580:J9UO?2@dWG^`m53
+I]6<`Khed42=cj3@91C4gi2
+R1
+R2
+w1571164502
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory.v
+Z18 L0 31
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory.v|
+!i113 1
+R5
+vmemory_D
+R16
+!i10b 1
+!s100 `?<F>m9HQ`n15<O7TzIjF2
+I6VhzMeN:UfOc2z6PZJQ[e0
+R1
+R2
+Z19 w1571094091
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_D.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_D.v
+R18
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_D.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_D.v|
+!i113 1
+R5
+nmemory_@d
+vmemory_I
+R16
+!i10b 1
+!s100 KO[VlkhRTj==Xm@Vz1JPA1
+ITIEDRRP89O[@gUeW@BWW`1
+R1
+R2
+R19
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_I.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_I.v
+R18
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_I.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/memory_I.v|
+!i113 1
+R5
+nmemory_@i
+vPADDSB
+R16
+!i10b 1
+!s100 S`mC04mQGYB5_IS3GR@Ad3
+IgWzC:obgdLUma:DoF5IV82
+R1
+R2
+Z20 w1571004365
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB.v
+L0 1
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB.v|
+!i113 1
+R5
+n@p@a@d@d@s@b
+vPADDSB_tb
 R11
+R16
+!i10b 1
+!s100 T3zd[2;5Z=4<O8lSFbP?^2
+IUg@V`;bna`M27IKJLMQJ>0
+R1
+!s105 PADDSB_tb_sv_unit
+S1
+R2
+R20
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB_tb.sv
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB_tb.sv
+L0 1
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB_tb.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PADDSB_tb.sv|
+!i113 1
+R13
+n@p@a@d@d@s@b_tb
+vPC
+R16
+!i10b 1
+!s100 ?E_hVY_<Q7RonXeBN:Vii1
+IIiNbH^W`_aCJ;aQ`oIUX>0
+R1
+R2
+R15
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC.v
+L0 1
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC.v|
+!i113 1
+R5
+n@p@c
+vPC_control
+R16
+!i10b 1
+!s100 ^g]NUYB?Y;Ph<=m6HYPBV0
+I8BKV<PRCIO>;<VYB[f;DD2
+R1
+R2
+R10
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control.v
+L0 1
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control.v|
+!i113 1
+R5
+n@p@c_control
+vPC_control_tb
+Z21 !s110 1571188195
+!i10b 1
+!s100 6CUOmH3`AfCMNESMd]gdm0
+I9FYf<=C3bIVV^G6bdKMM_3
+R1
+R2
+w1571002493
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control_tb.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control_tb.v
+L0 1
+R3
+r1
+!s85 0
+31
+Z22 !s108 1571188195.000000
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control_tb.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/PC_control_tb.v|
+!i113 1
+R5
+n@p@c_control_tb
+vReadDecoder_4_16
+R21
+!i10b 1
+!s100 >ZHi4LR:lHnE9lcDRFP`E2
+Ik`oCPjcG[e4g5<LYYblWk0
+R1
+R2
+R14
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ReadDecoder_4_16.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ReadDecoder_4_16.v
+L0 1
+R3
+r1
+!s85 0
+31
+R22
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ReadDecoder_4_16.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/ReadDecoder_4_16.v|
+!i113 1
+R5
+n@read@decoder_4_16
+vRED
+R21
+!i10b 1
+!s100 F]BiRHP@TE:1anWC2OSbh3
+IYOf;;hl^kWXFY]9BHAOk<2
+R1
+R2
+R12
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED.v
+L0 1
+R3
+r1
+!s85 0
+31
+R22
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED.v|
+!i113 1
+R5
+n@r@e@d
+vRED_tb
+R21
+!i10b 1
+!s100 @6GVBSFMj:fc0iQN=O3HY2
+I^<9gWfU_eW`Oj3?gF93IP0
+R1
+R2
+R15
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED_tb.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED_tb.v
+L0 1
+R3
+r1
+!s85 0
+31
+R22
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED_tb.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RED_tb.v|
+!i113 1
+R5
+n@r@e@d_tb
+vRegister
+R21
+!i10b 1
+!s100 b8XfK]f@HDV?ADf<WC2R:2
+IYo0OAizlSzWl^0PLR`WOn3
+R1
+R2
+R14
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register.v
+L0 1
+R3
+r1
+!s85 0
+31
+R22
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register.v|
+!i113 1
+R5
+n@register
+vRegister_3
+R21
+!i10b 1
+!s100 mOi[OjzN@OH=aSKg0UEaO3
+Ib7;_hBOI`3JGz0JiRTC;?3
+R1
+R2
+R15
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register_3.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register_3.v
+L0 1
+R3
+r1
+!s85 0
+31
+R22
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register_3.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/Register_3.v|
+!i113 1
+R5
+n@register_3
+vRegisterFile
+R21
+!i10b 1
+!s100 bj^lb8hE:o[Ha:jU8kU5I1
+I]1h7IdiJ?2MUb`<B5RHC]1
+R1
+R2
+R14
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RegisterFile.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RegisterFile.v
+L0 1
+R3
+r1
+!s85 0
+31
+R22
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RegisterFile.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/RegisterFile.v|
+!i113 1
+R5
+n@register@file
 vshifter
-!s110 1571163718
+R21
 !i10b 1
 !s100 f85jjk9co=o@][ag0hA2Q1
 Iz5eAkdThHakgbfM:gL``W2
-R0
 R1
+R2
 w1570999265
 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v
 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v
 L0 1
-R2
+R3
 r1
 !s85 0
 31
-!s108 1571163718.000000
+R22
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter.v|
 !i113 1
-R3
+R5
 vshifter_tb
-!s110 1570999040
+R21
 !i10b 1
 !s100 05El[3KV=ZL0SP0[TSZ^P1
 I<37f`FJ;Xg2PJ@7`?=CMa2
-R0
 R1
+R2
 w1570999036
 8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter_tb.v
 FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter_tb.v
 L0 1
-R2
+R3
 r1
 !s85 0
 31
-!s108 1570999040.000000
+R22
 !s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter_tb.v|
 !s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/shifter_tb.v|
 !i113 1
+R5
+vWriteDecoder_4_16
+R21
+!i10b 1
+!s100 ;WHmnO>NohCPLn3:KZ]HB3
+Ib]Xk`K9=^;jf]Uz9SnLML3
+R1
+R2
+R14
+8C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/WriteDecoder_4_16.v
+FC:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/WriteDecoder_4_16.v
+L0 1
 R3
+r1
+!s85 0
+31
+R22
+!s107 C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/WriteDecoder_4_16.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Alex Wang/Documents/GitHub/552-pj/Project_Phase1/WriteDecoder_4_16.v|
+!i113 1
+R5
+n@write@decoder_4_16
