@@ -18,7 +18,7 @@ assign PC_RD = 1'b1;
 assign PC_WE = 1'b0;
 assign pc = PC_ADDR;
 assign DATA_RD = OPOCODE[3]&!OPOCODE[2]&!OPOCODE[1];
-assign DATA_IN = B;
+assign DATA_IN = A;
 assign DATA_ADDR = RES;
 memory_I InstructionMem (.data_out(PC_OUT), .data_in(PC_IN), .addr(PC_ADDR), .enable(PC_RD), .wr(PC_WE), .clk(clk), .rst(!rst_n));
 memory_D DataMed        (.data_out(DATA_OUT), .data_in(DATA_IN), .addr(DATA_ADDR), .enable(DATA_RD), .wr(DATA_WE), .clk(clk), .rst(!rst_n));
