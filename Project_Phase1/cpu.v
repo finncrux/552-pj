@@ -16,7 +16,7 @@ wire[15:0]PC_IN,PC_OUT,DATA_IN,DATA_OUT,PC_ADDR,DATA_ADDR;
 wire PC_WE,PC_RD,DATA_WE,DATA_RD;       // write enable when WE and RD are both high
 assign PC_RD = 1'b1;
 assign PC_WE = 1'b0;
-assign pc = PC_OUT;
+assign pc = PC_ADDR;
 assign DATA_RD = OPOCODE[3]&!OPOCODE[2]&!OPOCODE[1];
 assign DATA_IN = B;
 assign DATA_ADDR = RES;
