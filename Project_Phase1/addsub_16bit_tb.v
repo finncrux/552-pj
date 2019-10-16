@@ -6,6 +6,7 @@ wire signed [15:0] RES;
 wire OVFL;
 wire VLD;
 wire [15:0]Sum1;
+wire o;
 
 initial begin
     repeat(50) begin
@@ -19,7 +20,7 @@ initial begin
     end
 end
 
-addsub_16bit Adder(.A(A),.B(B),.sub(sub),.SUM(RES));
+addsub_16bit Adder(.A(A),.B(B),.sub(sub),.Sum(RES), .Ovfl(o));
 // define clk
 
 assign Sum = sub? A-B:A + B;
