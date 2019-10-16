@@ -15,7 +15,7 @@ assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b110)?(F[1]):
                1'b1;
 
-addsub_16bit PC_adder(.A(PC_in), .B(16'h0002), .SUM(IncedPC), .sub(1'b0),.ovfl(ovfl1));
-addsub_16bit PC_I_adder(.A(IncedPC), .B({6'b000000,I,1'b0}), .SUM(IncedPCWithImm), .sub(1'b0),.ovfl(ovfl2));
+addsub_16bit PC_adder(.A(PC_in), .B(16'h0002), .Sum(IncedPC), .sub(1'b0),.Ovfl(ovfl1));
+addsub_16bit PC_I_adder(.A(IncedPC), .B({6'b000000,I,1'b0}), .Sum(IncedPCWithImm), .sub(1'b0),.Ovfl(ovfl2));
 assign PC_out[15:0] = Taken?IncedPCWithImm[15:0]:IncedPC[15:0];
 endmodule
