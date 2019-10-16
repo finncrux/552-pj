@@ -45,7 +45,7 @@ wire[15:0] PC_Reg_OUT,REG_DATA;
 wire[3:0] rs,rt,rd;
 wire writer_en,writem_en,halt;
 assign REG_DATA = (OPOCODE ==4'b1110)?PCS:RES;
-decoder decoder(.instruction(PC_Reg_OUT), .opcode(OPOCODE), .rs(rs), .rt(rt), .rd(rd), 
+decoder decoder(.instruction(PC_OUT), .opcode(OPOCODE), .rs(rs), .rt(rt), .rd(rd), 
 .immediate_8bit(I), .offset_9bit(offset_9bit), .condition(CONDITION), .writem_en(writem_en), .writer_en(writer_en), .halt(halt));
 // register file
 RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), 
