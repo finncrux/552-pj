@@ -177,7 +177,7 @@ module cpu_tb();
    assign MemData = DUT.DATA_IN;
    // Data to be written to memory for memory writes (16 bits)
    
-//   assign Halt = DUT.memory0.halt; //You won't need this because it's part of the main cpu interface
+   assign Halt = DUT.halt; //You won't need this because it's part of the main cpu interface
    // Is processor halted (1 bit signal)
    
    /* Add anything else you want here */
