@@ -44,7 +44,9 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 wire[15:0] PC_Reg_OUT,REG_DATA;
 wire[3:0] rs,rt,rd;
 wire writer_en,writem_en,halt;
-assign REG_DATA = (OPOCODE ==4'b1110)?PCS:RES;
+assign REG_DATA = (OPOCODE ==4'b1110)?PCS:
+                  (OPOCODE ==4'b1001)?DATA_OUT:
+                  RES;
 decoder decoder(.instruction(PC_OUT), .opcode(OPOCODE), .rs(rs), .rt(rt), .rd(rd), 
 .immediate_8bit(I), .offset_9bit(offset_9bit), .condition(CONDITION), .writem_en(writem_en), .writer_en(writer_en), .halt(halt));
 // register file
