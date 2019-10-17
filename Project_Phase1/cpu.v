@@ -33,7 +33,7 @@ PC PC(.clk(clk), .rst(!rst_n),
 
 // Flag register
 wire[2:0] FlagFromAlu;
-assign FlagFromAlu = {(RES[15]==1),(RES==0),(ALU_OVFL)};
+assign FlagFromAlu = {(RES==0),(ALU_OVFL),(RES[15]==1)};
 assign WriteEnableN =!(|OPOCODE[3:1]);
 assign WriteEnableZ = WriteEnableN|(OPOCODE==4'b0010)|(OPOCODE==4'b0100)|(OPOCODE==4'b0101)|(OPOCODE==4'b0110);
 assign WriteEnableV =!(|OPOCODE[3:1]);
