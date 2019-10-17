@@ -123,7 +123,7 @@ module cpu_tb();
             $fclose(trace_file);
             $fclose(sim_log_file);
             
-            $finish;
+            $stop();
          end else begin
             if (MemWrite) begin
                // st

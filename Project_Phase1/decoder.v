@@ -15,7 +15,7 @@ assign writer_en = ((rd !== 4'b0000) && ((!((opcode == 4'b1001) | (opcode[3] & o
 assign opcode = instruction[15:12];
 assign halt = (opcode == 4'b1111);
 assign rd = instruction[11:8];
-assign rs = ((opcode[3]&(!opcode[2])) ? instruction[11:8] : instruction[7:4]); //A
+assign rs = (opcode == 4'hd) ? instruction[7:4] : ((opcode[3]&(!opcode[2])) ? instruction[11:8] : instruction[7:4]); //A
 assign rt = ((opcode[3]&(!opcode[2])) ? instruction[7:4] : instruction[3:0]);  //B
 assign immediate_8bit = instruction[7:0];
 assign offset_9bit = (opcode == 4'b1100)? instruction[8:0] : 9'h000;
