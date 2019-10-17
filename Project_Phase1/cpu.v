@@ -29,7 +29,7 @@ wire[15:0] PCS;
 wire [8:0] offset_9bit;
 PC PC(.clk(clk), .rst(!rst_n),
             .Condition(CONDITION),.Imm(offset_9bit), .Flag(FLAG), 
-            .PC_addr(PC_ADDR),.PCS(PCS),.PC_Reg_Addr(DATA_OUT),.opcode(OPOCODE));
+            .PC_addr(PC_ADDR),.PCS(PCS),.PC_Reg_Addr(A),.opcode(OPOCODE));
 
 // Flag register
 wire[2:0] FlagFromAlu;
