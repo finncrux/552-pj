@@ -29,11 +29,6 @@ module cpu_tb();
    cpu DUT(.clk(clk), .rst_n(rst_n), .pc(PC), .hlt(Halt)); /* Instantiate your processor */
    
 
-
-
-
-
-
    /* Setup */
    initial begin
       $display("Hello world...simulation starting");
