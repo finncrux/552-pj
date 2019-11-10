@@ -58,13 +58,64 @@ assign IF_ID_Write = Stall ? 0 : 1;
 assign IF_Flush = Flush;
 
 // Data Reg
-Register_16 PC(.Q(PC_IF), .D(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
-Register_16 Instr(.Q(Instr_IF), .D(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
+Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
+Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
 
 
 ////////////////////////////////////////////
 // ID //////////////////////////////////////
 ////////////////////////////////////////////
+
+/////////////////to ID/EX register
+wire [15:0] Rs_Data_ID, Rt_Data_ID, sign_extend_ID;
+wire writeReg_en_ID, writeMem_en_ID, MEM_DATA_RD_EN_ID;
+wire MemToReg_ID;  /////////////// load -> 0, other -> 1
+wire [3:0] rs, rt, rd, OPCODE;
+
+////////////////inside signal
+input [15:0] REG_DATA;
+input rst_n, clk;
+input writer_en;
+input [3:0]F;
+
+wire Stall, writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
+wire [3:0]OPCODE1;
+wire taken;
+wire [2:0]C;
+wire [15:0]PC_B, PC_BR;
+wire ovfl, ovfl1;
+wire [7:0]I;
+assign Taken = (C[2:0]==3'b000)?!F[2]:
+               (C[2:0]==3'b001)?F[2]:
+               (C[2:0]==3'b010)?(!F[2]&(!F[0])):
+               (C[2:0]==3'b011)?F[0]:
+               (C[2:0]==3'b100)?(F[2]|(!F[0]&(!F[2]))):
+               (C[2:0]==3'b101)?((F[0]|(F[2]))):
+               (C[2:0]==3'b110)?(F[1]):
+               1'b1;
+assign MemToReg_ID = !(OPCODE1 == 4'b1000);
+assign sign_extend_ID = {{8{I[7]}}, I};
+assign MEM_DATA_RD_EN_ID = OPCODE1[3]&!OPCODE1[2]&!OPCODE1[1];
+assign writeReg_en_ID = Stall? 1'b0 : writeReg1_en_ID;
+assign writeMem_en_ID = Stall? 1'b0 : writeMem1_en_ID;
+assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
+assign OPOCODE = Stall? 1'b0 : OPCODE1;
+assign PC_BR = data_out1_ID;
+assign PC_Branch = taken? (OPCODE1[0]? PC_B : PC_BR) : PC_IF;
+
+adder_B addsub_16bit(.A(PC_IF), .B(offset_9bit), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
+decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(rs), .rt(rt), .rd(rd), 
+                .immediate_8bit(I), .offset_9bit(offset_9bit), .condition(C), .writem_en(writeMem1_en_ID),
+                .writer_en(writeReg1_en_ID), .halt(hlt));
+
+// register file
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstReg(rd), .WriteReg( writer_en), .DstData(REG_DATA), 
+                    .SrcData1(data_out1_ID), .SrcData2(data_out2_ID));
+
+
+
+
+
 
 // I/O Expose
 wire [15:0] RegWrt_Data;
@@ -85,26 +136,26 @@ wire [15:0] Rs_Data_EX, Rt_Data_EX, IMM_EX;
 wire [3:0] Rs_EX, Rt_EX, Rd_EX;
 
 // Control Reg EX
-Register_4 ALUOp(.Q(ALUOp_ID), .D(ALUOp_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 ALUSrc(.Q(ALUSrc_ID), .D(ALUSrc_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 RegDst(.Q(RegDst_ID), .D(RegDst_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 ALUOp(.D(ALUOp_ID), .Q(ALUOp_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 ALUSrc(.D(ALUSrc_ID), .Q(ALUSrc_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegDst(.D(RegDst_ID), .Q(RegDst_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg M
-Register_1 MemRead_id(.Q(MemRead_ID), .D(MemRead_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 MemWrite_id(.Q(MemWrt_ID), .D(MemWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemRead_id(.D(MemRead_ID), .Q(MemRead_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemWrite_id(.D(MemWrt_ID), .Q(MemWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg WB
-Register_1 MemToReg_id(.Q(MemToReg_ID), .D(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 RegWrt_id(.Q(RegWrt_ID), .D(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemToReg_id(.D(MemToReg_ID), .Q(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt_id(.D(RegWrt_ID), .Q(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
-Register_16 RegRead1(.Q(Rs_Data_ID), .D(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 RegRead2(.Q(Rt_Data_ID), .D(Rt_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 IMM(.Q(IMM_ID), .D(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 RegRead1(.D(Rs_Data_ID), .Q(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 RegRead2(.D(Rt_Data_ID), .Q(Rt_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 IMM(.D(IMM_ID), .D(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
-Register_4 Rs(.Q(Rs_ID), .D(Rs_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rt(.Q(Rt_ID), .D(Rt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rd(.Q(Rd_ID), .D(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rs(.D(Rs_ID), .D(Rs_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rt(.D(Rt_ID), .D(Rt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd(.D(Rd_ID), .D(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
@@ -147,25 +198,33 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 ////////////////////////////////////////////
 
 //I/O Expose Control
+wire [3:0] ALUOp_MEM;
+wire ALUSrc_MEM, RegDst_MEM;    //EX
 wire MemRead_MEM, MemWrt_MEM;   //M
 wire MemToReg_MEM, RegWrt_MEM;  //WB
 
 // I/O Expose Data
 wire [15:0] MemWrt_Data_MEM, MemAddr_MEM;
-wire [3:0] Rd_MEM;
+wire [3:0] Rd_MEM, Rs_MEM;
+
+// Control Reg EX
+Register_4 ALUOp_ex(.D(ALUOp_EX), .Q(ALUOp_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 ALUSrc_ex(.D(ALUSrc_EX), .Q(ALUSrc_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegDst_ex(.D(RegDst_EX), .Q(RegDst_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg M
-Register_1 MemRead_ex(.Q(MemRead_EX), .D(MemRead_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 MemWrite_ex(.Q(MemWrt_EX), .D(MemWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemRead_ex(.D(MemRead_EX), .Q(MemRead_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemWrite_ex(.D(MemWrt_EX), .Q(MemWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg WB
-Register_1 MemToReg_ex(.Q(MemToReg_EX), .D(MemToReg_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 RegWrt_ex(.Q(RegWrt_EX), .D(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemToReg_ex(.D(MemToReg_EX), .Q(MemToReg_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt_ex(.D(RegWrt_EX), .Q(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
-Register_16 RES_Reg(.Q(RES_EX), .D(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 B_Reg(.Q(B), .D(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rd_ex(.Q(Rd_EX), .D(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 RES_Reg(.D(RES_EX), .Q(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 B_Reg(.D(B), .Q(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd_ex(.D(Rd_EX), .Q(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rs_ex(.D(Rs_EX), .Q(Rs_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
@@ -184,20 +243,32 @@ memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data_MEM), .add
 ////////////////////////////////////////////
 
 //I/O Expose Control
-wire MemToReg_WB, RegWrt_WB;
+wire [3:0] ALUOp_WB;
+wire ALUSrc_WB, RegDst_WB;    //EX
+wire MemRead_WB, MemWrt_WB;   //M
+wire MemToReg_WB, RegWrt_WB;  //WB
 
 // I/O Expose Data
 wire [15:0] MemRead_Data_WB, MemWrt_Data_WB;
 wire [3:0] Rd_WB;
 
+// Control Reg EX
+Register_4 ALUOp_mem(.D(ALUOp_MEM), .Q(ALUOp_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 ALUSrc_mem(.D(ALUSrc_MEM), .Q(ALUSrc_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegDst_mem(.D(RegDst_MEM), .Q(RegDst_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
+// Control Reg M
+Register_1 MemRead_mem(.D(MemRead_MEM), .Q(MemRead_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemWrite_mem(.D(MemWrt_MEM), .Q(MemWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
 // Control Reg WB
-Register_1 MemToReg_mem(.Q(MemToReg_MEM), .D(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 RegWrt_mem(.Q(RegWrt_MEM), .D(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemToReg_mem(.D(MemToReg_MEM), .Q(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt_mem(.D(RegWrt_MEM), .Q(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
-Register_16 MemRead_Data(.Q(MemRead_Data_MEM), .D(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 MemWrt_Data(.Q(MemWrt_Data_MEM), .D(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rd_mem(.Q(Rd_MEM), .D(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 MemRead_Data(.D(MemRead_Data_MEM), .Q(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 MemWrt_Data(.D(MemWrt_Data_MEM), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 ////////////////////////////////////////////
 // WB ////////////////////////////////////// OK
@@ -225,5 +296,22 @@ FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_MEM),
 // HAZARD DETECTION //////////////////////// OK
 ////////////////////////////////////////////
 
-
+// Detect load to use stall only!!! 
+// The Stall Signal is passed to the ID/EX stage!!!
+// I/O exposed
+wire[3:0] ID_EX_opocode, EX_MEM_opocode;            // Input: Operation on each stage
+wire[3:0] EX_MEM_RD;                                // Input: Load destination
+wire[3:0] ID_EX_RS,ID_EX_RT;                        // Input: the regs that may need the newly loaded data
+wire Stall;                                         // Output: whether the load-to-use stall is needed
+// I/O End
+wire ID_EX_RT_NOIMMEDIATA;                          // Whether RT is actually needed
+wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passed in later stage
+assign ID_EX_RT_USED =                              // Not Shift related or PC related instruction
+                ID_EX_opocode[3:2]!=2'b11 & !((ID_EX_opocode[3:2]==2'b01)&(ID_EX_opocode!=4'b0111));
+assign ID_EX_RT_NOFORWARDING=
+                ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall need since we can get the data by forwarding.
+assign Stall =  ((ID_EX_opocode == 4'b1100)|(ID_EX_opocode == 4'b1101))|// B or BR
+                ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
+                &((ID_EX_RS == EX_MEM_RD)|((ID_EX_RT_NOFORWARDING & ID_EX_RT_USED)&
+                (ID_EX_RT == EX_MEM_RD))));          // RT is actually used and no forwarding here.
 endmodule
