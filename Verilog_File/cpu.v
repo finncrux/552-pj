@@ -70,16 +70,13 @@ wire [15:0] Rs_Data_ID, Rt_Data_ID, IMM_ID;
 wire RegWrt_ID, MemWrt_ID, MemRead_ID;
 wire MemToReg_ID;  /////////////// load -> 0, other -> 1
 wire [3:0] Rs_ID, Rt_ID, Rd_ID, ALUOp_ID;
-
 ////////////////inside signal
 wire [15:0] RegWrt_Data;
-wire rst_n, clk;
-wire writer_en;
 wire [3:0]F;
 
 wire writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
 wire [3:0]OPCODE1;
-wire taken;
+wire Taken;
 wire [2:0]C;
 wire [15:0]PC_B, PC_BR;
 wire ovfl, ovfl1;
@@ -109,8 +106,8 @@ decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID)
                 .writer_en(writeReg1_en_ID), .halt(hlt));
 
 // register file
-RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstReg(rd), .WriteReg( writer_en), .DstData(RegWrt_Data), 
-                    .SrcData1(data_out1_ID), .SrcData2(data_out2_ID));
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstReg(rd), .WriteReg( RegWrt_EX), .DstData(RegWrt_Data), 
+                    .SrcData1(Rs_Data_ID), .SrcData2(Rt_Data_ID));
 
 
 
@@ -118,7 +115,7 @@ RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstRe
 
 
 // I/O Expose
-wire [15:0] RegWrt_Data;
+
 
 
 ////////////////////////////////////////////
