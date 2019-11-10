@@ -38,7 +38,7 @@ Register_16 Instr(.Q(Instr_IF), .D(Instr_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF
 
 // Data Reg
 Register_16 RegRead1(.Q(Rs_Data_ID), .D(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 RegRead2(.Q(_EX_ID), .D(_EX_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 RegRead2(.Q(Rt_Data_ID), .D(Rt_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_16 IMM(.Q(IMM_ID), .D(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
@@ -49,7 +49,7 @@ Register_16 IMM(.Q(IMM_ID), .D(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1)
 
 // I/O exposed
 wire[2:0] FlagFromAlu;      // flag output from ALU
-wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,_EX_EX;   // the data passed into ALU
+wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_Data_EX;   // the data passed into ALU
 wire RsMemFwd,RsExFwd;      // RS forwarding?
 wire RtMemFwd,RtExFwd;      // Rt forwarding?
 wire [15:0] RES;            // ALU result
