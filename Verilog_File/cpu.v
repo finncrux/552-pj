@@ -141,17 +141,17 @@ wire [15:0] MemWrt_Data_MEM, MemAddr_MEM;
 wire [3:0] Rd_MEM;
 
 // Control Reg M
-Register_1 MemRead_EX(.Q(MemRead_EX), .D(MemRead_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 MemWrite_EX(.Q(MemWrt_EX), .D(MemWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemRead_ex(.Q(MemRead_EX), .D(MemRead_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemWrite_ex(.Q(MemWrt_EX), .D(MemWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg WB
-Register_1 MemToReg_EX(.Q(MemToReg_EX), .D(MemToReg_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 RegWrt_EX(.Q(RegWrt_EX), .D(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemToReg_ex(.Q(MemToReg_EX), .D(MemToReg_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt_ex(.Q(RegWrt_EX), .D(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
-Register_16 RES(.Q(RES_EX), .D(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 B(.Q(B), .D(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rd_EX(.Q(Rd_EX), .D(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 RES_Reg(.Q(RES_EX), .D(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 B_Reg(.Q(B), .D(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd_ex(.Q(Rd_EX), .D(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
@@ -177,22 +177,23 @@ wire [15:0] MemRead_Data_WB, MemWrt_Data_WB;
 wire [3:0] Rd_WB;
 
 // Control Reg WB
-Register_1 MemToReg_MEM(.Q(MemToReg_MEM), .D(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 RegWrt_MEM(.Q(RegWrt_MEM), .D(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemToReg_mem(.Q(MemToReg_MEM), .D(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt_mem(.Q(RegWrt_MEM), .D(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
 Register_16 MemRead_Data(.Q(MemRead_Data_MEM), .D(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_16 MemWrt_Data(.Q(MemWrt_Data_MEM), .D(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rd_MEM(.Q(Rd_MEM), .D(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd_mem(.Q(Rd_MEM), .D(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 ////////////////////////////////////////////
 // WB ////////////////////////////////////// OK
 ////////////////////////////////////////////
 
+// I/O External
+wire [15:0] RegWrt_Data;
 
 //Select RegWrt Data
-RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB
-
+assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB
 
 ////////////////////////////////////////////
 // FORWARDING UNIT /////////////////////////
@@ -202,9 +203,9 @@ RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB
 // How to read?
 // e.g ID_EX_Rs_MEM_Fwd means in ID/EX stage, Rs take forwarding input from MEM stage
 
-wire [3:0] ID_EX_Rs,  ID_EX_Rt,                 // Input: which reg does each stage needs
-           EX_MEM_Rs, EX_MEM_Rt, EX_MEM_Rd;
-           MEM_WB_Rs, MEM_WB_Rt, MEM_WB_Rd;
+wire [3:0] ID_EX_Rs,  ID_EX_Rt,                 
+           EX_MEM_Rs, EX_MEM_Rt, EX_MEM_Rd,
+           MEM_WB_Rs, MEM_WB_Rt, MEM_WB_Rd;     // Input: which reg does each stage needs
 wire ID_EX_Rs_EX_Fwd , ID_EX_Rt_EX_Fwd ;        // Output: EX take input from EX Fwd
 wire ID_EX_Rs_MEM_Fwd , ID_EX_Rt_MEM_Fwd;       // Output: EX take input from MEM Fwd
 wire EX_MEM_Rs_Fwd, EX_MEM_Rt_Fwd;              // Output: MEM take input from MEM Fwd
