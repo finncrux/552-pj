@@ -94,6 +94,13 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 // MEM /////////////////////////////////////
 ////////////////////////////////////////////
 
+// I/O Expose
+wire [15:0] MemRead_Data_MEM, MemWrt_Data_MEM, MemAddr_MEM;
+wire MemRead_MEM, MemWrt_MEM;
+
+// Data Memory
+memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data_MEM), .addr(MemAddr_MEM), .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
+
 
 ////////////////////////////////////////////
 // MEM/WB Reg //////////////////////////////
