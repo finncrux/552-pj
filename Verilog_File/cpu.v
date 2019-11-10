@@ -110,12 +110,15 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 ////////////////////////////////////////////
 
 // I/O exposed
-wire [3:0] ID_EX_Rs,  ID_EX_Rt,          // Input: which reg does each stage needs
+wire [3:0] ID_EX_Rs,  ID_EX_Rt,                 // Input: which reg does each stage needs
            EX_MEM_Rs, EX_MEM_Rt, EX_MEM_Rd;
-wire ID_EX_Rs_EX_Fwd , ID_EX_Rt_EX_Fwd ;   // Output: EX take input from EX Fwd
-wire ID_EX_Rs_MEM_Fwd , ID_EX_Rt_MEM_Fwd;  // Output: EX take input from MEM Fwd
-wire EX_MEM_Rs_Fwd, EX_MEM_Rt_Fwd;        // Output: MEM take input from MEM Fwd
-wire EX_MEM_Opocode_Vld, MEM_WB_Opocode_Vld;     // Input: whether the operation produce useful output in ALU.
-                                          // If the operation is a load or save then the address is not useful.
-assign ID_EX_Rs_Fwd = (ID_EX_Rs!=0) & (EX_MEM_Rd == ID_EX_Rs) & (EX_MEM_Opocode_Vld);
+wire ID_EX_Rs_EX_Fwd , ID_EX_Rt_EX_Fwd ;        // Output: EX take input from EX Fwd
+wire ID_EX_Rs_MEM_Fwd , ID_EX_Rt_MEM_Fwd;       // Output: EX take input from MEM Fwd
+wire EX_MEM_Rs_Fwd, EX_MEM_Rt_Fwd;              // Output: MEM take input from MEM Fwd
+wire EX_MEM_Opocode_Vld, MEM_WB_Opocode_Vld;    // Input: whether the operation produce useful output in ALU.
+                                                // If the operation is a load or save then the address is not useful.
+// I/O end
+assign ID_EX_Rs_Fwd = (ID_EX_Rs!=0) & (EX_MEM_Rd == ID_EX_Rs) & (EX_MEM_Opocode_Vld);  // Rs EX to EX
+assign ID_EX_Rt_Fwd = (ID_EX_Rt!=0) & (EX_MEM_Rd == ID_EX_Rt) & (EX_MEM_Opocode_Vld);  // Rt EX to EX
+
 endmodule
