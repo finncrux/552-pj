@@ -21,7 +21,6 @@ wire [15:0] PC_Branch;  //PC value, if added from branch offset
 // I/O Internal
 wire [15:0] PC_Reg_IN, PC_Reg_OUT, Instr_IF;
 wire [15:0] PC_2;
-wire Ovfl;
 wire PCWrite;
 
 wire PC_Rd, PC_Wrt, Ovfl;
@@ -78,7 +77,7 @@ input rst_n, clk;
 input writer_en;
 input [3:0]F;
 
-wire Stall, writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
+wire writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
 wire [3:0]OPCODE1;
 wire taken;
 wire [2:0]C;
@@ -151,11 +150,11 @@ Register_1 RegWrt_id(.D(RegWrt_ID), .Q(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrt
 // Data Reg
 Register_16 RegRead1(.D(Rs_Data_ID), .Q(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_16 RegRead2(.D(Rt_Data_ID), .Q(Rt_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 IMM(.D(IMM_ID), .D(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 IMM(.D(IMM_ID), .Q(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
-Register_4 Rs(.D(Rs_ID), .D(Rs_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rt(.D(Rt_ID), .D(Rt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rd(.D(Rd_ID), .D(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rs(.D(Rs_ID), .Q(Rs_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rt(.D(Rt_ID), .Q(Rt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd(.D(Rd_ID), .Q(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
@@ -175,6 +174,8 @@ wire [3:0] OPOCODE;         // operation to execuate
 wire [15:0] A,B;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
+assign MemFwdSource = RegWrt_Data;
+assign ExFwdSource = MemAddr_MEM;
 wire ALU_OVFL;
 ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
 //wire [2:0] FlagFromAlu;     // flag output from ALU
@@ -233,9 +234,12 @@ Register_4 Rs_ex(.D(Rs_EX), .Q(Rs_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1)
 
 // I/O External
 wire [15:0] MemRead_Data_MEM;
+wire MemFWD;
+// Mem-Mem FWD MUX
+assign MemWrt_Data = MemFWD ? RegWrt_Data : MemWrt_Data_MEM;
 
 // Data Memory
-memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data_MEM), .addr(MemAddr_MEM), .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
+memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(MemAddr_MEM), .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
 
 
 ////////////////////////////////////////////
@@ -284,14 +288,13 @@ assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB;
 // FORWARDING UNIT ///////////////////////// OK
 ////////////////////////////////////////////
 
-FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_MEM),
-           .ID_EX_Rs(Rs_ID),  .ID_EX_Rt(Rt_ID),                 
-           .EX_MEM_Rs(Rs_EX), .EX_MEM_Rt(Rt_EX), .EX_MEM_Rd(Rd_EX),
-           .MEM_WB_Rd(Rd_MEM),
-           .ID_EX_Rs_EX_Fwd(RsExFwd) , .ID_EX_Rt_EX_Fwd(RtExFwd),
-           .ID_EX_Rs_MEM_Fwd(RsMemFwd), .ID_EX_Rt_MEM_Fwd(RtMemFwd),
-           .EX_MEM_Rs_Fwd(), .EX_MEM_Rt_Fwd());
-
+FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_WB),
+           .ID_EX_Rs(Rs_EX),  .ID_EX_Rt(Rt_EX),                 
+           .EX_MEM_Rd(Rd_MEM), 
+           .MEM_WB_Rd(Rd_WB), 
+           .ID_EX_Rs_EX_Fwd(RsExFwd) , .ID_EX_Rt_EX_Fwd(RtExFwd) ,
+           .ID_EX_Rs_MEM_Fwd(RsMemFwd) , .ID_EX_Rt_MEM_Fwd(RtMemFwd),
+           .MEM_TO_MEM_Fwd(MemFWD));
 ////////////////////////////////////////////
 // HAZARD DETECTION //////////////////////// OK
 ////////////////////////////////////////////
