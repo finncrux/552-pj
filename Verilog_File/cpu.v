@@ -70,6 +70,7 @@ wire [15:0] Rs_Data_ID, Rt_Data_ID, sign_extend_ID;
 wire writeReg_en_ID, writeMem_en_ID, MEM_DATA_RD_EN_ID;
 wire MemToReg_ID;  /////////////// load -> 0, other -> 1
 wire [3:0] rs, rt, rd, OPCODE;
+wire [3:0] OPOCODE;         // operation to execuate
 
 ////////////////inside signal
 input [15:0] REG_DATA;
@@ -170,12 +171,11 @@ wire [15:0] RES_EX;            // ALU result
 //wire [15:0] IMM_EX;            // 16 bit immediate input
 
 // alu module
-wire [3:0] OPOCODE;         // operation to execuate
-wire [15:0] A,B;
+wire [15:0] A,B,ExFWD_TEMP;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
 assign MemFwdSource = RegWrt_Data;
-assign ExFwdSource = MemAddr_MEM;
+assign ExFwdSource = ExFWD_TEMP;
 wire ALU_OVFL;
 ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
 //wire [2:0] FlagFromAlu;     // flag output from ALU
@@ -207,7 +207,7 @@ wire MemToReg_MEM, RegWrt_MEM;  //WB
 // I/O Expose Data
 wire [15:0] MemWrt_Data_MEM, MemAddr_MEM;
 wire [3:0] Rd_MEM, Rs_MEM;
-
+assign ExFWD_TEMP = MemAddr_MEM;
 // Control Reg EX
 Register_4 ALUOp_ex(.D(ALUOp_EX), .Q(ALUOp_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 ALUSrc_ex(.D(ALUSrc_EX), .Q(ALUSrc_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -271,7 +271,7 @@ Register_1 RegWrt_mem(.D(RegWrt_MEM), .Q(RegWrt_WB), .clk(clk), .rst(!rst_n), .w
 
 // Data Reg
 Register_16 MemRead_Data(.D(MemRead_Data_MEM), .Q(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 MemWrt_Data(.D(MemWrt_Data_MEM), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 MemWrt_data(.D(MemWrt_Data_MEM), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 ////////////////////////////////////////////
@@ -305,7 +305,6 @@ FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_WB),
 wire[3:0] ID_EX_opocode, EX_MEM_opocode;            // Input: Operation on each stage
 wire[3:0] EX_MEM_RD;                                // Input: Load destination
 wire[3:0] ID_EX_RS,ID_EX_RT;                        // Input: the regs that may need the newly loaded data
-wire Stall;                                         // Output: whether the load-to-use stall is needed
 // I/O End
 wire ID_EX_RT_NOIMMEDIATA;                          // Whether RT is actually needed
 wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passed in later stage
