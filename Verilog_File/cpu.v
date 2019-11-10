@@ -26,7 +26,7 @@ module cpu(clk, rst_n, hlt, pc);
 ////////////////////////////////////////////
 
 // I/O exposed
-wire[2:0] FlagFromAlu;      // flag output from ALU
+wire [2:0] FlagFromAlu;     // flag output from ALU
 wire [15:0] MemFwdSource,ExFwdSource,Rs_Data,Rt_data;   // the data passed into ALU
 wire RsMemFwd,RsExFwd;      // RS forwarding?
 wire RtMemFwd,RtExFwd;      // Rt forwarding?
