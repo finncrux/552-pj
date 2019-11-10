@@ -102,7 +102,7 @@ wire[2:0] FlagFromAlu;      // flag output from ALU
 wire [15:0] MemFwdSource,ExFwdSource;//,Rs_Data_EX,Rt_Data_EX;   // the data passed into ALU
 wire RsMemFwd,RsExFwd;      // RS forwarding?
 wire RtMemFwd,RtExFwd;      // Rt forwarding?
-//wire [15:0] RES_EX;            // ALU result
+wire [15:0] RES_EX;            // ALU result
 //wire [15:0] IMM_EX;            // 16 bit immediate input
 
 // alu module
@@ -111,7 +111,7 @@ wire [15:0] A,B;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
 wire ALU_OVFL;
-ALU alu(.A(A),.B(B),.I(IMM[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
+ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
 //wire [2:0] FlagFromAlu;     // flag output from ALU
 //wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_data_EX;   // the data passed into ALU
 //wire RsMemFwd,RsExFwd;      // RS forwarding?
@@ -190,10 +190,10 @@ Register_4 Rd_mem(.Q(Rd_MEM), .D(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 ////////////////////////////////////////////
 
 // I/O External
-wire [15:0] RegWrt_Data;
+//wire [15:0] RegWrt_Data;
 
 //Select RegWrt Data
-assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB
+assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB;
 
 ////////////////////////////////////////////
 // FORWARDING UNIT /////////////////////////
@@ -203,7 +203,7 @@ assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB
 // How to read?
 // e.g ID_EX_Rs_MEM_Fwd means in ID/EX stage, Rs take forwarding input from MEM stage
 
-wire [3:0] ID_EX_Rs,  ID_EX_Rt,                 
+wire[3:0]  ID_EX_Rs,  ID_EX_Rt,                 
            EX_MEM_Rs, EX_MEM_Rt, EX_MEM_Rd,
            MEM_WB_Rs, MEM_WB_Rt, MEM_WB_Rd;     // Input: which reg does each stage needs
 wire ID_EX_Rs_EX_Fwd , ID_EX_Rt_EX_Fwd ;        // Output: EX take input from EX Fwd
@@ -213,7 +213,7 @@ wire[3:0] EX_MEM_Opocode,     MEM_WB_Opocode;   // Input, the opocode of those t
 wire EX_MEM_Opocode_Vld, MEM_WB_Opocode_Vld;    // Debug only, no need to connect. Whether the operation produce useful output in ALU.
                                                 // If the operation is a load or save then the address is not useful.
 // I/O end
-assign MEM_WB_Opocode_Vld = MEM_WB_Opocode = 4'b1000;                                       //Only load lead to useful output
+assign MEM_WB_Opocode_Vld = MEM_WB_Opocode == 4'b1000;                                      //Only load lead to useful output
 assign EX_MEM_Opocode_Vld = (EX_MEM_Opocode[3:1] != 3'b100)&(EX_MEM_Opocode[3:2]!= 2'b11);  //Not Store, Load, or Brunch, BR, PCS, HLT.
 
 assign ID_EX_Rs_Fwd = (ID_EX_Rs!=0) & (EX_MEM_Rd == ID_EX_Rs) & (EX_MEM_Opocode_Vld);       //Rs EX to EX
