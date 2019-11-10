@@ -67,18 +67,18 @@ Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush
 ////////////////////////////////////////////
 
 /////////////////to ID/EX register
-wire [15:0] Rs_Data_ID, Rt_Data_ID, sign_extend_ID;
-wire writeReg_en_ID, writeMem_en_ID, MEM_DATA_RD_EN_ID;
+wire [15:0] Rs_Data_ID, Rt_Data_ID, IMM_ID;
+wire RegWrt_ID, MemWrt_ID, MemRead_ID;
 wire MemToReg_ID;  /////////////// load -> 0, other -> 1
-wire [3:0] rs, rt, rd, OPCODE;
+wire [3:0] Rs_ID, Rt_ID, Rd_ID, ALUOp_ID;
 
 ////////////////inside signal
-input [15:0] REG_DATA;
-input rst_n, clk;
-input writer_en;
-input [3:0]F;
+wire [15:0] RegWrt_Data;
+wire rst_n, clk;
+wire writer_en;
+wire [3:0]F;
 
-wire Stall, writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
+wire Stall, writeReg1_en_ID, writeMem1_en_ID;
 wire [3:0]OPCODE1;
 wire taken;
 wire [2:0]C;
@@ -93,23 +93,24 @@ assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b101)?((F[0]|(F[2]))):
                (C[2:0]==3'b110)?(F[1]):
                1'b1;
+assign MemRead_ID = Stall? 1'b0 : (ALUOp_ID == 4'b1000);
 assign MemToReg_ID = !(OPCODE1 == 4'b1000);
-assign sign_extend_ID = {{8{I[7]}}, I};
+assign IMM_ID = {{8{I[7]}}, I};
 assign MEM_DATA_RD_EN_ID = OPCODE1[3]&!OPCODE1[2]&!OPCODE1[1];
-assign writeReg_en_ID = Stall? 1'b0 : writeReg1_en_ID;
-assign writeMem_en_ID = Stall? 1'b0 : writeMem1_en_ID;
+assign RegWrt_ID = Stall? 1'b0 : writeReg1_en_ID;
+assign MemWrt_ID = Stall? 1'b0 : writeMem1_en_ID;
 assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
-assign OPOCODE = Stall? 1'b0 : OPCODE1;
-assign PC_BR = data_out1_ID;
+assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
+assign PC_BR = Rs_Data_ID;
 assign PC_Branch = taken? (OPCODE1[0]? PC_B : PC_BR) : PC_IF;
 
-adder_B addsub_16bit(.A(PC_IF), .B(offset_9bit), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
-decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(rs), .rt(rt), .rd(rd), 
+adder_B addsub_16bit(.A(PC_IF), .B({{7{offset_9bit[8]}}, offset_9bit), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
+decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
                 .immediate_8bit(I), .offset_9bit(offset_9bit), .condition(C), .writem_en(writeMem1_en_ID),
                 .writer_en(writeReg1_en_ID), .halt(hlt));
 
 // register file
-RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstReg(rd), .WriteReg( writer_en), .DstData(REG_DATA), 
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstReg(rd), .WriteReg( writer_en), .DstData(RegWrt_Data), 
                     .SrcData1(data_out1_ID), .SrcData2(data_out2_ID));
 
 
