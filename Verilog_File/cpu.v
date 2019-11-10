@@ -1,11 +1,14 @@
 module cpu(clk, rst_n, hlt, pc);
 
-wire wrtEn_1;
-assign wrtEn_1 = 1;
-
+//Global Signal
 input clk, rst_n;
 output hlt;
 output[15:0] pc;
+
+wire Stall;             //From Hazard Detection
+wire Flush;             //From Hazard Detection
+wire wrtEn_1;
+assign wrtEn_1 = 1;
 
 ////////////////////////////////////////////
 // IF ////////////////////////////////////// OK
@@ -14,7 +17,6 @@ output[15:0] pc;
 // I/O External
 wire Branch_Hazard;     //Branch signal from Hazard Detection Unit
 wire [15:0] PC_Branch;  //PC value, if added from branch offset
-wire Stall              //From Hazard Detection
 
 // I/O Internal
 wire [15:0] PC_Reg_IN, PC_Reg_OUT, Instr_IF;
@@ -42,7 +44,7 @@ addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl
 memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg_OUT), .enable(PC_Rd), .wr(PC_Wrt), .clk(clk), .rst(!rst_n));
 
 ////////////////////////////////////////////
-// IF/ID Reg ///////////////////////////////
+// IF/ID Reg /////////////////////////////// OK
 ////////////////////////////////////////////
 
 // I/O Internal
@@ -50,6 +52,7 @@ wire IF_ID_Write;   //Set to 0 if stall
 wire IF_Flush;      //Set to 1 if flush
 
 assign IF_ID_Write = Stall ? 0 : 1;
+assign IF_Flush = Flush;
 
 // Data Reg
 Register_16 PC(.Q(PC_IF), .D(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
@@ -102,7 +105,7 @@ Register_4 Rd(.Q(Rd_ID), .D(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
-// EX //////////////////////////////////////
+// EX ////////////////////////////////////// OK
 ////////////////////////////////////////////
 
 // I/O exposed
@@ -204,7 +207,7 @@ Register_4 Rd_mem(.Q(Rd_MEM), .D(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB;
 
 ////////////////////////////////////////////
-// FORWARDING UNIT /////////////////////////
+// FORWARDING UNIT ///////////////////////// OK
 ////////////////////////////////////////////
 
 // I/O exposed
@@ -233,7 +236,7 @@ assign EX_MEM_Rt_Fwd = (EX_MEM_Rt!=0) & (MEM_WB_Rd == EX_MEM_Rt) & (MEM_WB_Opoco
 
 
 ////////////////////////////////////////////
-// HAZARD DETECTION ////////////////////////
+// HAZARD DETECTION //////////////////////// OK
 ////////////////////////////////////////////
 
 // Detect load to use stall only!!! 
