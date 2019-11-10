@@ -25,16 +25,14 @@ assign writeReg_en_ID = Stall? 1'b0 : writeReg1_en_ID;
 assign writeMem_en_ID = Stall? 1'b0 : writeMem1_en_ID;
 assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
 assign OPOCODE = Stall? 1'b0 : OPCODE1;
+
 decoder decoder(.instruction(register_input), .opcode(OPOCODE1), .rs(rs), .rt(rt), .rd(rd), 
-.immediate_8bit(I), .offset_9bit(offset_9bit), .condition(CONDITION), .writem_en(writeMem1_en_ID), .writer_en(writeReg1_en_ID), .halt(hlt));
+                .immediate_8bit(I), .offset_9bit(offset_9bit), .condition(CONDITION), .writem_en(writeMem1_en_ID),
+                .writer_en(writeReg1_en_ID), .halt(hlt));
 
 // register file
-RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), 
-                    .DstReg(rd), .WriteReg( writer_en), .DstData(REG_DATA), 
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstReg(rd), .WriteReg( writer_en), .DstData(REG_DATA), 
                     .SrcData1(data_out1_ID), .SrcData2(data_out2_ID));
-
-
-
 
 
 endmodule
