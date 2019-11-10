@@ -57,10 +57,31 @@ wire [15:0] RegWrt_Data;
 
 
 ////////////////////////////////////////////
-// ID/EX Reg ///////////////////////////////
+// ID/EX Reg /////////////////////////////// OK
 ////////////////////////////////////////////
 
-// Control Reg
+// I/O Control
+wire [3:0] ALUOp_EX;
+wire ALUSrc_EX, RegDst_EX;      //EX
+wire MemRead_EX, MemWrt_EX;     //M
+wire MemToReg_EX, RegWrt_EX;    //WB
+
+// I/O Data
+wire [15:0] Rs_Data_EX, Rt_Data_EX, IMM_EX;
+wire [3:0] Rs_EX, Rt_EX, Rd_EX;
+
+// Control Reg EX
+Register_4 ALUOp(.Q(ALUOp_ID), .D(ALUOp_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 ALUSrc(.Q(ALUSrc_ID), .D(ALUSrc_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegDst(.Q(RegDst_ID), .D(RegDst_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
+// Control Reg M
+Register_1 MemRead_ID(.Q(MemRead_ID), .D(MemRead_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemWrite_ID(.Q(MemWrt_ID), .D(MemWrt_EX, .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
+// Control Reg WB
+Register_1 MemToReg_ID(.Q(MemToReg_ID), .D(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt_ID(.Q(RegWrt_ID), .D(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
 Register_16 RegRead1(.Q(Rs_Data_ID), .D(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -114,7 +135,7 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 ,.WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
 
 ////////////////////////////////////////////
-// EX/MEM Reg //////////////////////////////
+// EX/MEM Reg ////////////////////////////// OK
 ////////////////////////////////////////////
 
 //I/O Expose Control
@@ -122,7 +143,7 @@ wire MemRead_MEM, MemWrt_MEM;   //M
 wire MemToReg_MEM, RegWrt_MEM;  //WB
 
 // I/O Expose Data
-wire [15:0] MemRead_Data_MEM, MemWrt_Data_MEM, MemAddr_MEM;
+wire [15:0] MemWrt_Data_MEM, MemAddr_MEM;
 wire [3:0] Rd_MEM;
 
 // Control Reg M
@@ -142,6 +163,9 @@ Register_4 Rd_EX(.Q(Rd_EX), .D(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1)
 ////////////////////////////////////////////
 // MEM ///////////////////////////////////// OK
 ////////////////////////////////////////////
+
+// I/O External
+wire [15:0] MemRead_Data_MEM;
 
 // Data Memory
 memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data_MEM), .addr(MemAddr_MEM), .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
