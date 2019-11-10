@@ -1,11 +1,14 @@
 module cpu(clk, rst_n, hlt, pc);
 
-wire wrtEn_1;
-assign wrtEn_1 = 1;
-
+//Global Signal
 input clk, rst_n;
 output hlt;
 output[15:0] pc;
+
+wire Stall;             //From Hazard Detection
+wire Flush;             //From Hazard Detection
+wire wrtEn_1;
+assign wrtEn_1 = 1;
 
 ////////////////////////////////////////////
 // IF ////////////////////////////////////// OK
@@ -18,16 +21,21 @@ wire [15:0] PC_Branch;  //PC value, if added from branch offset
 // I/O Internal
 wire [15:0] PC_Reg_IN, PC_Reg_OUT, Instr_IF;
 wire [15:0] PC_2;
+wire Ovfl;
+wire PCWrite;
 
 wire PC_Rd, PC_Wrt, Ovfl;
 assign PC_Rd = 1'b1;
 assign PC_Wrt = 1'b0;
 
+//Stall Condition
+assign PCWrite = Stall ? 0 : 1;
+
 //PC Reg IN Select Mux
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
 
 //PC Reg
-pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN),.PC_out(PC_Reg_OUT));
+pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite));
 
 //PC Add 2
 addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
@@ -36,12 +44,18 @@ addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl
 memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg_OUT), .enable(PC_Rd), .wr(PC_Wrt), .clk(clk), .rst(!rst_n));
 
 ////////////////////////////////////////////
-// IF/ID Reg ///////////////////////////////
+// IF/ID Reg /////////////////////////////// OK
 ////////////////////////////////////////////
 
-// I/O exposed
+// I/O External
+wire [15:0] PC_ID, Instr_ID;
+
+// I/O Internal
 wire IF_ID_Write;   //Set to 0 if stall
 wire IF_Flush;      //Set to 1 if flush
+
+assign IF_ID_Write = Stall ? 0 : 1;
+assign IF_Flush = Flush;
 
 // Data Reg
 Register_16 PC(.Q(PC_IF), .D(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
@@ -94,7 +108,7 @@ Register_4 Rd(.Q(Rd_ID), .D(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
-// EX //////////////////////////////////////
+// EX ////////////////////////////////////// OK
 ////////////////////////////////////////////
 
 // I/O exposed
@@ -196,7 +210,7 @@ Register_4 Rd_mem(.Q(Rd_MEM), .D(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB;
 
 ////////////////////////////////////////////
-// FORWARDING UNIT /////////////////////////
+// FORWARDING UNIT ///////////////////////// OK
 ////////////////////////////////////////////
 
 FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_MEM),
@@ -208,25 +222,8 @@ FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_MEM),
            .EX_MEM_Rs_Fwd(), .EX_MEM_Rt_Fwd());
 
 ////////////////////////////////////////////
-// HAZARD DETECTION ////////////////////////
+// HAZARD DETECTION //////////////////////// OK
 ////////////////////////////////////////////
 
-// Detect load to use stall only!!! 
-// The Stall Signal is passed to the ID/EX stage!!!
-// I/O exposed
-wire[3:0] ID_EX_opocode, EX_MEM_opocode;            // Input: Operation on each stage
-wire[3:0] EX_MEM_RD;                                // Input: Load destination
-wire[3:0] ID_EX_RS,ID_EX_RT;                        // Input: the regs that may need the newly loaded data
-wire Stall;                                         // Output: whether the load-to-use stall is needed
-// I/O End
-wire ID_EX_RT_NOIMMEDIATA;                          // Whether RT is actually needed
-wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passed in later stage
-assign ID_EX_RT_USED =                              // Not Shift related or PC related instruction
-                ID_EX_opocode[3:2]!=2'b11 & !((ID_EX_opocode[3:2]==2'b01)&(ID_EX_opocode!=4'b0111));
-assign ID_EX_RT_NOFORWARDING=
-                ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall need since we can get the data by forwarding.
-assign Stall =  ((ID_EX_opocode == 4'b1100)|(ID_EX_opocode == 4'b1101))|// B or BR
-                ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
-                &((ID_EX_RS == EX_MEM_RD)|((ID_EX_RT_NOFORWARDING & ID_EX_RT_USED)&
-                (ID_EX_RT == EX_MEM_RD))));          // RT is actually used and no forwarding here.
+
 endmodule
