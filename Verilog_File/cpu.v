@@ -24,7 +24,7 @@ assign PC_Rd = 1'b1;
 assign PC_Wrt = 1'b0;
 
 //PC Reg IN Select Mux
-PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
+assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
 
 //PC Reg
 pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN),.PC_out(PC_Reg_OUT));
@@ -76,12 +76,12 @@ Register_1 ALUSrc(.Q(ALUSrc_ID), .D(ALUSrc_EX), .clk(clk), .rst(!rst_n), .wrtEn(
 Register_1 RegDst(.Q(RegDst_ID), .D(RegDst_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg M
-Register_1 MemRead_ID(.Q(MemRead_ID), .D(MemRead_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 MemWrite_ID(.Q(MemWrt_ID), .D(MemWrt_EX, .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemRead_id(.Q(MemRead_ID), .D(MemRead_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemWrite_id(.Q(MemWrt_ID), .D(MemWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg WB
-Register_1 MemToReg_ID(.Q(MemToReg_ID), .D(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 RegWrt_ID(.Q(RegWrt_ID), .D(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 MemToReg_id(.Q(MemToReg_ID), .D(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt_id(.Q(RegWrt_ID), .D(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
 Register_16 RegRead1(.Q(Rs_Data_ID), .D(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -99,32 +99,26 @@ Register_4 Rd(.Q(Rd_ID), .D(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // I/O exposed
 wire[2:0] FlagFromAlu;      // flag output from ALU
-wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_Data_EX;   // the data passed into ALU
+wire [15:0] MemFwdSource,ExFwdSource;//,Rs_Data_EX,Rt_Data_EX;   // the data passed into ALU
 wire RsMemFwd,RsExFwd;      // RS forwarding?
 wire RtMemFwd,RtExFwd;      // Rt forwarding?
-wire [15:0] RES_EX;            // ALU result
-wire [15:0] IMM_EX;            // 16 bit immediate input
-wire [3:0] opocode;         // operation to execuate
+//wire [15:0] RES_EX;            // ALU result
+//wire [15:0] IMM_EX;            // 16 bit immediate input
 
 // alu module
-wire [15:0] A,B;
-assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
-assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
-wire OVFL;
-ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(opocode),.OVFL(OVFL));    
-wire [2:0] FlagFromAlu;     // flag output from ALU
-wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_data_EX;   // the data passed into ALU
-wire RsMemFwd,RsExFwd;      // RS forwarding?
-wire RtMemFwd,RtExFwd;      // Rt forwarding?
-wire [15:0] IMM;            // 16 bit immediate input
 wire [3:0] OPOCODE;         // operation to execuate
-
-// alu module
 wire [15:0] A,B;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
 wire ALU_OVFL;
 ALU alu(.A(A),.B(B),.I(IMM[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
+//wire [2:0] FlagFromAlu;     // flag output from ALU
+//wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_data_EX;   // the data passed into ALU
+//wire RsMemFwd,RsExFwd;      // RS forwarding?
+//wire RtMemFwd,RtExFwd;      // Rt forwarding?
+//wire [15:0] IMM;            // 16 bit immediate input
+
+
 
 // Flag logic
 assign FlagFromAlu = {(RES_EX==0),(ALU_OVFL),(RES_EX[15]==1)};
