@@ -14,20 +14,26 @@ output[15:0] pc;
 // I/O External
 wire Branch_Hazard;     //Branch signal from Hazard Detection Unit
 wire [15:0] PC_Branch;  //PC value, if added from branch offset
+wire Stall              //From Hazard Detection
 
 // I/O Internal
 wire [15:0] PC_Reg_IN, PC_Reg_OUT, Instr_IF;
 wire [15:0] PC_2;
+wire Ovfl;
+wire PCWrite;
 
 wire PC_Rd, PC_Wrt, Ovfl;
 assign PC_Rd = 1'b1;
 assign PC_Wrt = 1'b0;
 
+//Stall Condition
+assign PCWrite = Stall ? 0 : 1;
+
 //PC Reg IN Select Mux
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
 
 //PC Reg
-pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN),.PC_out(PC_Reg_OUT));
+pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite));
 
 //PC Add 2
 addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
@@ -39,9 +45,11 @@ memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg
 // IF/ID Reg ///////////////////////////////
 ////////////////////////////////////////////
 
-// I/O exposed
+// I/O Internal
 wire IF_ID_Write;   //Set to 0 if stall
 wire IF_Flush;      //Set to 1 if flush
+
+assign IF_ID_Write = Stall ? 0 : 1;
 
 // Data Reg
 Register_16 PC(.Q(PC_IF), .D(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
