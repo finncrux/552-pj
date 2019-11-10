@@ -154,7 +154,7 @@ wire MemToReg_MEM, RegWrt_MEM;  //WB
 
 // I/O Expose Data
 wire [15:0] MemWrt_Data_MEM, MemAddr_MEM;
-wire [3:0] Rd_MEM;
+wire [3:0] Rd_MEM, Rs_MEM;
 
 // Control Reg EX
 Register_4 ALUOp_ex(.D(ALUOp_EX), .Q(ALUOp_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -173,6 +173,7 @@ Register_1 RegWrt_ex(.D(RegWrt_EX), .Q(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wr
 Register_16 RES_Reg(.D(RES_EX), .Q(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_16 B_Reg(.D(B), .Q(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_4 Rd_ex(.D(Rd_EX), .Q(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rs_ex(.D(Rs_EX), .Q(Rs_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
