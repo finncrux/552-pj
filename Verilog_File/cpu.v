@@ -24,6 +24,7 @@ module cpu(clk, rst_n, hlt, pc);
 ////////////////////////////////////////////
 //EX////////////////////////////////////////
 ////////////////////////////////////////////
+
 // I/O exposed
 wire[2:0] FlagFromAlu;      // flag output from ALU
 wire [15:0] MemFwdSource,ExFwdSource,Rs_Data,Rt_data;   // the data passed into ALU
@@ -32,16 +33,15 @@ wire RtMemFwd,RtExFwd;      // Rt forwarding?
 wire [15:0] RES;            // ALU result
 wire [15:0] IMM;            // 16 bit immediate input
 wire [3:0] opocode;         // operation to execuate
-// alu module
 
+// alu module
 wire [15:0] A,B,RES;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
 wire OVFL;
 ALU alu(.A(A),.B(B),.I(IMM[7:0]),.RES(RES),.opocode(opocode),.OVFL(OVFL));    
 
-// setting up the flag logic
-
+// Flag logic
 assign FlagFromAlu = {(RES==0),(ALU_OVFL),(RES[15]==1)};
 assign WriteEnableN =!(|OPOCODE[3:1]);
 assign WriteEnableZ = WriteEnableN|(OPOCODE==4'b0010)|(OPOCODE==4'b0100)|(OPOCODE==4'b0101)|(OPOCODE==4'b0110);
@@ -50,22 +50,22 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 ,.WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
 
 ////////////////////////////////////////////
-//EX/MEM Reg////////////////////////////////
+// EX/MEM Reg //////////////////////////////
 ////////////////////////////////////////////
 
 
 ////////////////////////////////////////////
-//MEM///////////////////////////////////////
+// MEM /////////////////////////////////////
 ////////////////////////////////////////////
 
 
 ////////////////////////////////////////////
-//MEM/WB Reg////////////////////////////////
+// MEM/WB Reg //////////////////////////////
 ////////////////////////////////////////////
 
 
 ////////////////////////////////////////////
-//WB////////////////////////////////////////
+// WB //////////////////////////////////////
 ////////////////////////////////////////////
 
 
