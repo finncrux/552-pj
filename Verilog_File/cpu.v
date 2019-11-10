@@ -17,7 +17,7 @@ wire [15:0] PC_Branch;  //PC value, if added from branch offset
 
 // I/O Internal
 wire [15:0] PC_Reg_IN, PC_Reg_OUT, Instr_IF;
-wire [15:0] PC_2, PC_Branch;
+wire [15:0] PC_2;
 
 wire PC_Rd, PC_Wrt, Ovfl;
 assign PC_Rd = 1'b1;
