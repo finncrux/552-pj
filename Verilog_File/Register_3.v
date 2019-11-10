@@ -1,3 +1,4 @@
+//TESTED
 module Register_3(Q,D,clk,rst,WriteEnableN,WriteEnableZ,WriteEnableV);
 input[2:0] Q;
 output[2:0] D;
