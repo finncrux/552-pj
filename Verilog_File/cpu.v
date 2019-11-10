@@ -6,22 +6,46 @@ assign wrtEn_1 = 1;
 input clk, rst_n;
 output hlt;
 output[15:0] pc;
+
 ////////////////////////////////////////////
-// IF //////////////////////////////////////
+// IF ////////////////////////////////////// OK
 ////////////////////////////////////////////
 
+// I/O External
+wire Branch_Hazard;     //Branch signal from Hazard Detection Unit
+wire [15:0] PC_Branch;  //PC value, if added from branch offset
 
+// I/O Internal
+wire [15:0] PC_Reg_IN, PC_Reg_OUT, Instr_IF;
+wire [15:0] PC_2, PC_Branch;
+
+wire PC_Rd, PC_Wrt, Ovfl;
+assign PC_Rd = 1'b1;
+assign PC_Wrt = 1'b0;
+
+//PC Reg IN Select Mux
+PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
+
+//PC Reg
+pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN),.PC_out(PC_Reg_OUT));
+
+//PC Add 2
+addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
+
+//Instruction Memory
+memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg_OUT), .enable(PC_Rd), .wr(PC_Wrt), .clk(clk), .rst(!rst_n));
 
 ////////////////////////////////////////////
 // IF/ID Reg ///////////////////////////////
 ////////////////////////////////////////////
 
 // I/O exposed
-wire IF_ID_Write;
+wire IF_ID_Write;   //Set to 0 if stall
+wire IF_Flush;      //Set to 1 if flush
 
 // Data Reg
 Register_16 PC(.Q(PC_IF), .D(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
-Register_16 Instr(.Q(Instr_IF), .D(Instr_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
+Register_16 Instr(.Q(Instr_IF), .D(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
 
 
 ////////////////////////////////////////////
@@ -93,12 +117,15 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 // EX/MEM Reg //////////////////////////////
 ////////////////////////////////////////////
 
-// I/O Expose
+// I/O Expose Data
 wire [15:0] MemRead_Data_MEM, MemWrt_Data_MEM, MemAddr_MEM;
 wire MemRead_MEM, MemWrt_MEM;
 wire [3:0] Rd_MEM;
 
-// Control Reg
+// Control Reg WB
+
+
+// Control Reg M
 
 // Data Reg
 Register_16 RES(.Q(RES_EX), .D(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -107,7 +134,7 @@ Register_4 Rd_EX(.Q(Rd_EX), .D(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1)
 
 
 ////////////////////////////////////////////
-// MEM /////////////////////////////////////
+// MEM ///////////////////////////////////// OK
 ////////////////////////////////////////////
 
 // Data Memory
@@ -125,7 +152,7 @@ wire MemToReg_WB, RegWrt_WB;
 wire [15:0] MemRead_Data_WB, MemWrt_Data_WB;
 wire [3:0] Rd_WB;
 
-// Control Reg
+// Control Reg WB
 Register_1 MemToReg(.Q(MemToReg_MEM), .D(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt(.Q(RegWrt_MEM), .D(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
