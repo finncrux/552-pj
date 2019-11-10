@@ -28,6 +28,8 @@ Register_16 Instr(.Q(Instr_IF), .D(Instr_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF
 // ID //////////////////////////////////////
 ////////////////////////////////////////////
 
+// I/O Expose
+wire [15:0] RegWrt_Data;
 
 
 ////////////////////////////////////////////
@@ -41,6 +43,9 @@ Register_16 RegRead1(.Q(Rs_Data_ID), .D(Rs_Data_EX), .clk(clk), .rst(!rst_n), .w
 Register_16 RegRead2(.Q(Rt_Data_ID), .D(Rt_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_16 IMM(.Q(IMM_ID), .D(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
+Register_4 Rs(.Q(Rs_ID), .D(Rs_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rt(.Q(Rt_ID), .D(Rt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd(.Q(Rd_ID), .D(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
@@ -52,21 +57,20 @@ wire[2:0] FlagFromAlu;      // flag output from ALU
 wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_Data_EX;   // the data passed into ALU
 wire RsMemFwd,RsExFwd;      // RS forwarding?
 wire RtMemFwd,RtExFwd;      // Rt forwarding?
-wire [15:0] RES;            // ALU result
+wire [15:0] RES_EX;            // ALU result
 wire [15:0] IMM_EX;            // 16 bit immediate input
 wire [3:0] opocode;         // operation to execuate
 
 // alu module
-wire [15:0] A,B,RES;
+wire [15:0] A,B;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
 wire OVFL;
-ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES),.opocode(opocode),.OVFL(OVFL));    
+ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(opocode),.OVFL(OVFL));    
 wire [2:0] FlagFromAlu;     // flag output from ALU
 wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_data_EX;   // the data passed into ALU
 wire RsMemFwd,RsExFwd;      // RS forwarding?
 wire RtMemFwd,RtExFwd;      // Rt forwarding?
-wire [15:0] RES;            // ALU result
 wire [15:0] IMM;            // 16 bit immediate input
 wire [3:0] OPOCODE;         // operation to execuate
 
@@ -75,10 +79,10 @@ wire [15:0] A,B;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
 wire ALU_OVFL;
-ALU alu(.A(A),.B(B),.I(IMM[7:0]),.RES(RES),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
+ALU alu(.A(A),.B(B),.I(IMM[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
 
 // Flag logic
-assign FlagFromAlu = {(RES==0),(ALU_OVFL),(RES[15]==1)};
+assign FlagFromAlu = {(RES_EX==0),(ALU_OVFL),(RES_EX[15]==1)};
 assign WriteEnableN =!(|OPOCODE[3:1]);
 assign WriteEnableZ = WriteEnableN|(OPOCODE==4'b0010)|(OPOCODE==4'b0100)|(OPOCODE==4'b0101)|(OPOCODE==4'b0110);
 assign WriteEnableV =!(|OPOCODE[3:1]);
@@ -89,27 +93,54 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 // EX/MEM Reg //////////////////////////////
 ////////////////////////////////////////////
 
+// I/O Expose
+wire [15:0] MemRead_Data_MEM, MemWrt_Data_MEM, MemAddr_MEM;
+wire MemRead_MEM, MemWrt_MEM;
+wire [3:0] Rd_MEM;
+
+// Control Reg
+
+// Data Reg
+Register_16 RES(.Q(RES_EX), .D(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 B(.Q(B), .D(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd_EX(.Q(Rd_EX), .D(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
 
 ////////////////////////////////////////////
 // MEM /////////////////////////////////////
 ////////////////////////////////////////////
-
-// I/O Expose
-wire [15:0] MemRead_Data_MEM, MemWrt_Data_MEM, MemAddr_MEM;
-wire MemRead_MEM, MemWrt_MEM;
 
 // Data Memory
 memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data_MEM), .addr(MemAddr_MEM), .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
 
 
 ////////////////////////////////////////////
-// MEM/WB Reg //////////////////////////////
+// MEM/WB Reg ////////////////////////////// OK
+////////////////////////////////////////////
+
+//I/O Expose Control
+wire MemToReg_WB, RegWrt_WB;
+
+// I/O Expose Data
+wire [15:0] MemRead_Data_WB, MemWrt_Data_WB;
+wire [3:0] Rd_WB;
+
+// Control Reg
+Register_1 MemToReg(.Q(MemToReg_MEM), .D(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 RegWrt(.Q(RegWrt_MEM), .D(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
+// Data Reg
+Register_16 MemRead_Data(.Q(MemRead_Data_MEM), .D(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 MemWrt_Data(.Q(MemWrt_Data_MEM), .D(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rd_MEM(.Q(Rd_MEM), .D(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
+////////////////////////////////////////////
+// WB ////////////////////////////////////// OK
 ////////////////////////////////////////////
 
 
-////////////////////////////////////////////
-// WB //////////////////////////////////////
-////////////////////////////////////////////
+//Select RegWrt Data
+RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB
 
 
 ////////////////////////////////////////////
