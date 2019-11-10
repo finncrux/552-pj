@@ -1,3 +1,6 @@
+///////////////////////
+// TEST PASSED ////////
+///////////////////////
 module decoder(instruction, opcode, rs, rt, rd, immediate_8bit, 
                 offset_9bit, condition, writem_en, writer_en, halt);
 
