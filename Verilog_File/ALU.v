@@ -1,6 +1,6 @@
 ///////////////////////
-// TEST PASSED
-//////////////////////
+// TEST PASSED ////////
+///////////////////////
 module ALU(A,B,I,RES,opocode,OVFL);
 input [3:0] opocode;
 input [15:0] A,B; // A:RS, B:RD
