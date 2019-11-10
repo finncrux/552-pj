@@ -1,3 +1,4 @@
+//TESTED
 module CLA_4bit(input[3:0] A, input[3:0] B, input Cin, output[3:0] S, output G, output P, output Ovfl, output Cout);
 
 wire g0,g1,g2,g3,p0,p1,p2,p3,c1,c2,c3;
