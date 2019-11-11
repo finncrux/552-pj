@@ -67,13 +67,13 @@ Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush
 
 /////////////////to ID/EX register
 wire [15:0] Rs_Data_ID, Rt_Data_ID, IMM_ID;
-wire RegWrt_ID, MemWrt_ID, MemRead_ID;
+wire RegWrt_ID, MemWrt_ID, MemRead_ID, RegWrt_WB;
 wire MemToReg_ID;  /////////////// load -> 0, other -> 1
-wire [3:0] Rs_ID, Rt_ID, Rd_ID, ALUOp_ID;
+wire [3:0] Rs_ID, Rt_ID, Rd_ID, ALUOp_ID, Rd_WB;
 ////////////////inside signal
 wire [15:0] RegWrt_Data;
 wire [3:0]F;
-
+wire [8:0]offset_9bit1;
 wire writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
 wire [3:0]OPCODE1;
 wire Taken;
@@ -81,6 +81,8 @@ wire [2:0]C;
 wire [15:0]PC_B, PC_BR;
 wire ovfl, ovfl1;
 wire [7:0]I;
+wire halt;
+assign IF_Flush = Taken;
 assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b001)?F[2]:
                (C[2:0]==3'b010)?(!F[2]&(!F[0])):
@@ -98,15 +100,15 @@ assign MemWrt_ID = Stall? 1'b0 : writeMem1_en_ID;
 assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
 assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
 assign PC_BR = Rs_Data_ID;
-assign PC_Branch = taken? (OPCODE1[0]? PC_B : PC_BR) : PC_IF;
+assign PC_Branch = Taken? (OPCODE1[0]? PC_B : PC_BR) : PC_IF;
 
-adder_B addsub_16bit(.A(PC_IF), .B({{7{offset_9bit[8]}}, offset_9bit), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
+adder_B addsub_16bit(.A(PC_IF), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
 decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
-                .immediate_8bit(I), .offset_9bit(offset_9bit), .condition(C), .writem_en(writeMem1_en_ID),
-                .writer_en(writeReg1_en_ID), .halt(hlt));
+                .immediate_8bit(I), .offset_9bit(offset_9bit1), .condition(C), .writem_en(writeMem1_en_ID),
+                .writer_en(writeReg1_en_ID), .halt(halt));
 
 // register file
-RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(rs), .SrcReg2(rt), .DstReg(rd), .WriteReg( RegWrt_EX), .DstData(RegWrt_Data), 
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), .DstReg(Rd_WB), .WriteReg(RegWrt_WB), .DstData(RegWrt_Data), 
                     .SrcData1(Rs_Data_ID), .SrcData2(Rt_Data_ID));
 
 
@@ -174,7 +176,7 @@ assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
 assign MemFwdSource = RegWrt_Data;
 assign ExFwdSource = ExFWD_TEMP;
 wire ALU_OVFL;
-ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVFL));    
+ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(ALUOp_EX),.OVFL(ALU_OVFL));    
 //wire [2:0] FlagFromAlu;     // flag output from ALU
 //wire [15:0] MemFwdSource,ExFwdSource,Rs_Data_EX,Rt_data_EX;   // the data passed into ALU
 //wire RsMemFwd,RsExFwd;      // RS forwarding?
@@ -185,9 +187,9 @@ ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(OPOCODE),.OVFL(ALU_OVF
 
 // Flag logic
 assign FlagFromAlu = {(RES_EX==0),(ALU_OVFL),(RES_EX[15]==1)};
-assign WriteEnableN =!(|OPOCODE[3:1]);
-assign WriteEnableZ = WriteEnableN|(OPOCODE==4'b0010)|(OPOCODE==4'b0100)|(OPOCODE==4'b0101)|(OPOCODE==4'b0110);
-assign WriteEnableV =!(|OPOCODE[3:1]);
+assign WriteEnableN =!(|ALUOp_EX[3:1]);
+assign WriteEnableZ = WriteEnableN|(ALUOp_EX==4'b0010)|(ALUOp_EX==4'b0100)|(ALUOp_EX==4'b0101)|(ALUOp_EX==4'b0110);
+assign WriteEnableV =!(|ALUOp_EX[3:1]);
 Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN)
 ,.WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
 
@@ -247,11 +249,10 @@ memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(Me
 wire [3:0] ALUOp_WB;
 wire ALUSrc_WB, RegDst_WB;    //EX
 wire MemRead_WB, MemWrt_WB;   //M
-wire MemToReg_WB, RegWrt_WB;  //WB
+wire MemToReg_WB;  //WB
 
 // I/O Expose Data
 wire [15:0] MemRead_Data_WB, MemWrt_Data_WB;
-wire [3:0] Rd_WB;
 
 // Control Reg EX
 Register_4 ALUOp_mem(.D(ALUOp_MEM), .Q(ALUOp_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
