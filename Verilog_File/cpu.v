@@ -34,7 +34,7 @@ assign PCWrite = Stall ? 0 : 1;
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
 
 //PC Reg
-pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite));
+pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite & !hlt));
 
 //PC Add 2
 addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
@@ -81,7 +81,7 @@ wire [2:0]C;
 wire [15:0]PC_B, PC_BR;
 wire ovfl, ovfl1;
 wire [7:0]I;
-wire halt;
+wire halt_ID;
 assign IF_Flush = Taken;
 assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b001)?F[2]:
@@ -102,10 +102,10 @@ assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
 assign PC_BR = Rs_Data_ID;
 assign PC_Branch = Taken? (OPCODE1[0]? PC_B : PC_BR) : PC_IF;
 
-adder_B addsub_16bit(.A(PC_IF), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
+addsub_16bit adder_B(.A(PC_IF), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
 decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
                 .immediate_8bit(I), .offset_9bit(offset_9bit1), .condition(C), .writem_en(writeMem1_en_ID),
-                .writer_en(writeReg1_en_ID), .halt(halt));
+                .writer_en(writeReg1_en_ID), .halt(halt_ID));
 
 // register file
 RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), .DstReg(Rd_WB), .WriteReg(RegWrt_WB), .DstData(RegWrt_Data), 
@@ -129,7 +129,7 @@ wire [3:0] ALUOp_EX;
 wire ALUSrc_EX, RegDst_EX;      //EX
 wire MemRead_EX, MemWrt_EX;     //M
 wire MemToReg_EX, RegWrt_EX;    //WB
-
+wire halt_EX;
 // I/O Data
 wire [15:0] Rs_Data_EX, Rt_Data_EX, IMM_EX;
 wire [3:0] Rs_EX, Rt_EX, Rd_EX;
@@ -138,6 +138,7 @@ wire [3:0] Rs_EX, Rt_EX, Rd_EX;
 Register_4 ALUOp(.D(ALUOp_ID), .Q(ALUOp_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 ALUSrc(.D(ALUSrc_ID), .Q(ALUSrc_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegDst(.D(RegDst_ID), .Q(RegDst_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 HALT_id(.D(halt_ID), .Q(halt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg M
 Register_1 MemRead_id(.D(MemRead_ID), .Q(MemRead_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -202,7 +203,7 @@ wire [3:0] ALUOp_MEM;
 wire ALUSrc_MEM, RegDst_MEM;    //EX
 wire MemRead_MEM, MemWrt_MEM;   //M
 wire MemToReg_MEM, RegWrt_MEM;  //WB
-
+wire halt_MEM;
 // I/O Expose Data
 wire [15:0] MemWrt_Data_MEM, MemAddr_MEM;
 wire [3:0] Rd_MEM, Rs_MEM;
@@ -219,6 +220,7 @@ Register_1 MemWrite_ex(.D(MemWrt_EX), .Q(MemWrt_MEM), .clk(clk), .rst(!rst_n), .
 // Control Reg WB
 Register_1 MemToReg_ex(.D(MemToReg_EX), .Q(MemToReg_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_ex(.D(RegWrt_EX), .Q(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 HALT_ex(.D(halt_EX), .Q(halt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
 Register_16 RES_Reg(.D(RES_EX), .Q(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -250,7 +252,7 @@ wire [3:0] ALUOp_WB;
 wire ALUSrc_WB, RegDst_WB;    //EX
 wire MemRead_WB, MemWrt_WB;   //M
 wire MemToReg_WB;  //WB
-
+wire halt_WB;
 // I/O Expose Data
 wire [15:0] MemRead_Data_WB, MemWrt_Data_WB;
 
@@ -266,6 +268,7 @@ Register_1 MemWrite_mem(.D(MemWrt_MEM), .Q(MemWrt_WB), .clk(clk), .rst(!rst_n), 
 // Control Reg WB
 Register_1 MemToReg_mem(.D(MemToReg_MEM), .Q(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_mem(.D(RegWrt_MEM), .Q(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 HALT_id(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
 Register_16 MemRead_Data(.D(MemRead_Data_MEM), .Q(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -278,7 +281,7 @@ Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 
 // I/O External
 //wire [15:0] RegWrt_Data;
-
+assign hlt = halt_WB;
 //Select RegWrt Data
 assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB;
 
