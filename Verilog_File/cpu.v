@@ -197,8 +197,8 @@ assign FlagFromAlu = {(RES_EX==0),(ALU_OVFL),(RES_EX[15]==1)};
 assign WriteEnableN =!(|ALUOp_EX[3:1]);
 assign WriteEnableZ = WriteEnableN|(ALUOp_EX==4'b0010)|(ALUOp_EX==4'b0100)|(ALUOp_EX==4'b0101)|(ALUOp_EX==4'b0110);
 assign WriteEnableV =!(|ALUOp_EX[3:1]);
-Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN)
-,.WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
+Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN),
+                    .WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
 
 ////////////////////////////////////////////
 // EX/MEM Reg ////////////////////////////// OK
@@ -290,7 +290,7 @@ Register_1 MemWrite_mem(.D(MemWrt_MEM), .Q(MemWrt_WB), .clk(clk), .rst(!rst_n), 
 // Control Reg WB
 Register_1 MemToReg_mem(.D(MemToReg_MEM), .Q(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_mem(.D(RegWrt_MEM), .Q(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 HALT_id(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_1 HALT_mem(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
 Register_16 MemRead_Data(.D(MemRead_Data_MEM), .Q(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
