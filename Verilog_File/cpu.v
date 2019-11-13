@@ -124,6 +124,10 @@ RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), 
 // ID/EX Reg /////////////////////////////// OK
 ////////////////////////////////////////////
 
+// I/O Test
+wire [15:0]  Instr_EX;
+Register_16 Instr_id(.D(Instr_ID), .Q(Instr_EX), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
+
 // I/O Control
 wire [3:0] ALUOp_EX;
 wire ALUSrc_EX, RegDst_EX;      //EX
@@ -198,6 +202,10 @@ Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN
 // EX/MEM Reg ////////////////////////////// OK
 ////////////////////////////////////////////
 
+// I/O Test
+wire [15:0]  Instr_MEM;
+Register_16 Instr_ex(.D(Instr_EX), .Q(Instr_MEM), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
+
 //I/O Expose Control
 wire [3:0] ALUOp_MEM;
 wire ALUSrc_MEM, RegDst_MEM;    //EX
@@ -246,6 +254,10 @@ memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(Me
 ////////////////////////////////////////////
 // MEM/WB Reg ////////////////////////////// OK
 ////////////////////////////////////////////
+
+// I/O Test
+wire [15:0]  Instr_WB;
+Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
 
 //I/O Expose Control
 wire [3:0] ALUOp_WB;
@@ -296,6 +308,7 @@ FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_WB),
            .ID_EX_Rs_EX_Fwd(RsExFwd) , .ID_EX_Rt_EX_Fwd(RtExFwd) ,
            .ID_EX_Rs_MEM_Fwd(RsMemFwd) , .ID_EX_Rt_MEM_Fwd(RtMemFwd),
            .MEM_TO_MEM_Fwd(MemFWD));
+
 ////////////////////////////////////////////
 // HAZARD DETECTION //////////////////////// OK
 ////////////////////////////////////////////
