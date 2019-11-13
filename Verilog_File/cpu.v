@@ -269,10 +269,6 @@ wire [15:0]  Instr_WB, MemWrt_Data_WB;
 Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
 Register_16 MemWrt_Data_mem(.D(MemWrt_Data), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
-// I/O Test
-wire [15:0]  Instr_WB;
-Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
-
 //I/O Expose Control
 wire [3:0] ALUOp_WB;
 wire ALUSrc_WB, RegDst_WB;    //EX
