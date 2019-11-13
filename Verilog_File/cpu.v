@@ -26,7 +26,7 @@ wire PCWrite;
 wire PC_Rd, PC_Wrt, Ovfl;
 assign PC_Rd = 1'b1;
 assign PC_Wrt = 1'b0;
-
+assign pc = PC_Reg_OUT;
 //Stall Condition
 assign PCWrite = Stall ? 0 : 1;
 
@@ -48,7 +48,7 @@ memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg
 ////////////////////////////////////////////
 
 // I/O External
-wire [15:0] PC_ID, Instr_ID;
+wire [15:0] PC_ID, Instr_ID,PC_IF;
 
 // I/O Internal
 wire IF_ID_Write;   //Set to 0 if stall
@@ -56,7 +56,6 @@ wire IF_Flush;      //Set to 1 if flush
 
 assign IF_ID_Write = Stall ? 0 : 1;
 assign IF_Flush = Flush;
-
 // Data Reg
 Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
@@ -73,7 +72,7 @@ wire MemToReg_ID;  /////////////// load -> 0, other -> 1
 wire [3:0] Rs_ID, Rt_ID, Rd_ID, ALUOp_ID, Rd_WB;
 ////////////////inside signal
 wire [15:0] RegWrt_Data_WB;
-wire [3:0]F;
+wire [2:0]F;
 wire [8:0]offset_9bit1;
 wire writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
 wire [3:0]OPCODE1;
@@ -93,7 +92,7 @@ assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b110)?(F[1]):
                1'b1;
 assign MemRead_ID = Stall? 1'b0 : (ALUOp_ID == 4'b1000);
-assign MemToReg_ID = !(OPCODE1 == 4'b1000);
+assign MemToReg_ID = (OPCODE1 == 4'b1000);
 assign IMM_ID = {{8{I[7]}}, I};
 assign MEM_DATA_RD_EN_ID = OPCODE1[3]&!OPCODE1[2]&!OPCODE1[1];
 assign RegWrt_ID = Stall? 1'b0 : writeReg1_en_ID;
@@ -101,9 +100,9 @@ assign MemWrt_ID = Stall? 1'b0 : writeMem1_en_ID;
 assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
 assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
 assign PC_BR = Rs_Data_ID;
-assign PC_Branch = Taken? (OPCODE1[0]? PC_B : PC_BR) : PC_IF;
+assign PC_Branch = Taken? (OPCODE1[0]? PC_B : PC_BR) : PC_ID;
 
-addsub_16bit adder_B(.A(PC_IF), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
+addsub_16bit adder_B(.A(PC_ID), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
 decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
                 .immediate_8bit(I), .offset_9bit(offset_9bit1), .condition(C), .writem_en(writeMem1_en_ID),
                 .writer_en(writeReg1_en_ID), .halt(halt_ID));
@@ -197,7 +196,7 @@ assign FlagFromAlu = {(RES_EX==0),(ALU_OVFL),(RES_EX[15]==1)};
 assign WriteEnableN =!(|ALUOp_EX[3:1]);
 assign WriteEnableZ = WriteEnableN|(ALUOp_EX==4'b0010)|(ALUOp_EX==4'b0100)|(ALUOp_EX==4'b0101)|(ALUOp_EX==4'b0110);
 assign WriteEnableV =!(|ALUOp_EX[3:1]);
-Register_3 FLAGREG(.Q(FLAG),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN),
+Register_3 FLAGREG(.Q(F),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN),
                     .WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
 
 ////////////////////////////////////////////
