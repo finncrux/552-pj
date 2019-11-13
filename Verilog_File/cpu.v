@@ -40,7 +40,8 @@ pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWr
 addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
 
 //Instruction Memory
-memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg_OUT), .enable(PC_Rd), .wr(PC_Wrt), .clk(clk), .rst(!rst_n));
+memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg_OUT), 
+                            .enable(PC_Rd), .wr(PC_Wrt), .clk(clk), .rst(!rst_n));
 
 ////////////////////////////////////////////
 // IF/ID Reg /////////////////////////////// OK
@@ -108,8 +109,9 @@ decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID)
                 .writer_en(writeReg1_en_ID), .halt(halt_ID));
 
 // register file
-RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), .DstReg(Rd_WB), .WriteReg(RegWrt_WB), .DstData(RegWrt_Data_WB), 
-                    .SrcData1(Rs_Data_ID), .SrcData2(Rt_Data_ID));
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), .DstReg(Rd_WB), 
+                        .WriteReg(RegWrt_WB), .DstData(RegWrt_Data_WB), 
+                        .SrcData1(Rs_Data_ID), .SrcData2(Rt_Data_ID));
 
 
 
@@ -248,7 +250,8 @@ wire MemFWD;
 assign MemWrt_Data = MemFWD ? RegWrt_Data_WB : MemWrt_Data_MEM;
 
 // Data Memory
-memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(MemAddr_MEM), .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
+memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(MemAddr_MEM), 
+                        .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
 
 
 ////////////////////////////////////////////
@@ -335,7 +338,8 @@ wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passe
 assign ID_EX_RT_USED =                              // Not Shift related or PC related instruction
                 ID_EX_opocode[3:2]!=2'b11 & !((ID_EX_opocode[3:2]==2'b01)&(ID_EX_opocode!=4'b0111));
 assign ID_EX_RT_NOFORWARDING=
-                ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall need since we can get the data by forwarding.
+                ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall 
+                                                    // need since we can get the data by forwarding.
 assign Stall =  ((ID_EX_opocode == 4'b1100)|(ID_EX_opocode == 4'b1101))|// B or BR
                 ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
                 &((ID_EX_RS == EX_MEM_RD)|((ID_EX_RT_NOFORWARDING & ID_EX_RT_USED)&
