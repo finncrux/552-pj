@@ -71,7 +71,7 @@ wire RegWrt_ID, MemWrt_ID, MemRead_ID, RegWrt_WB;
 wire MemToReg_ID;  /////////////// load -> 0, other -> 1
 wire [3:0] Rs_ID, Rt_ID, Rd_ID, ALUOp_ID, Rd_WB;
 ////////////////inside signal
-wire [15:0] RegWrt_Data;
+wire [15:0] RegWrt_Data_WB;
 wire [3:0]F;
 wire [8:0]offset_9bit1;
 wire writeReg1_en_ID, writeMem1_en_ID, MEM_DATA_RD_EN1_ID;
@@ -108,7 +108,7 @@ decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID)
                 .writer_en(writeReg1_en_ID), .halt(halt_ID));
 
 // register file
-RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), .DstReg(Rd_WB), .WriteReg(RegWrt_WB), .DstData(RegWrt_Data), 
+RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), .DstReg(Rd_WB), .WriteReg(RegWrt_WB), .DstData(RegWrt_Data_WB), 
                     .SrcData1(Rs_Data_ID), .SrcData2(Rt_Data_ID));
 
 
@@ -178,7 +178,7 @@ wire [15:0] RES_EX;            // ALU result
 wire [15:0] A,B,ExFWD_TEMP;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
 assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
-assign MemFwdSource = RegWrt_Data;
+assign MemFwdSource = RegWrt_Data_WB;
 assign ExFwdSource = ExFWD_TEMP;
 wire ALU_OVFL;
 ALU alu(.A(A),.B(B),.I(IMM_EX[7:0]),.RES(RES_EX),.opocode(ALUOp_EX),.OVFL(ALU_OVFL));    
@@ -245,7 +245,7 @@ Register_4 Rs_ex(.D(Rs_EX), .Q(Rs_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1)
 wire [15:0] MemRead_Data_MEM;
 wire MemFWD;
 // Mem-Mem FWD MUX
-assign MemWrt_Data = MemFWD ? RegWrt_Data : MemWrt_Data_MEM;
+assign MemWrt_Data = MemFWD ? RegWrt_Data_WB : MemWrt_Data_MEM;
 
 // Data Memory
 memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(MemAddr_MEM), .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
@@ -292,10 +292,10 @@ Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 ////////////////////////////////////////////
 
 // I/O External
-//wire [15:0] RegWrt_Data;
+//wire [15:0] RegWrt_Data_WB;
 assign hlt = halt_WB;
 //Select RegWrt Data
-assign RegWrt_Data = MemToReg_WB ? MemRead_Data_WB : MemWrt_Data_WB;
+assign RegWrt_Data_WB = MemToReg_WB ? MemRead_Data_WB : MemAddr_MEM;
 
 ////////////////////////////////////////////
 // FORWARDING UNIT ///////////////////////// OK

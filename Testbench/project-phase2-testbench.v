@@ -138,13 +138,13 @@ module cpu_ptb();
    // Is processor halted (1 bit signal)
    
 
-   assign Inst = DUT.p0.Instr_IF;
+   assign Inst = DUT.Instr_MEM;
    //Instruction fetched in the current cycle
    
-   assign RegWrite = DUT.RegWrt_WB;
+   assign RegWrite = DUT.RegWrt_MEM;
    // Is register file being written to in this cycle, one bit signal (1 means yes, 0 means no)
   
-   assign WriteRegister = DUT.Rd_WB;
+   assign WriteRegister = DUT.Rd_MEM;
    // If above is true, this should hold the name of the register being written to. (4 bit signal)
    
    assign WriteData = DUT.RegWrt_Data;
