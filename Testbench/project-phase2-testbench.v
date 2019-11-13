@@ -138,7 +138,7 @@ module cpu_ptb();
    // Is processor halted (1 bit signal)
    
 
-   assign Inst = DUT.p0.Instr_IF;
+   assign Inst = DUT.Instr_IF;
    //Instruction fetched in the current cycle
    
    assign RegWrite = DUT.RegWrt_WB;
