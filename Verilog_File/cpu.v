@@ -265,10 +265,9 @@ memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(Me
 ////////////////////////////////////////////
 
 // I/O Test
-wire [15:0]  Instr_WB, MemAddr_WB, MemWrt_Data_WB;
-Register_16 Instr_wb(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
-Register_16 RES_Reg_wb(.D(MemAddr_MEM), .Q(MemAddr_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 MemWrt_Data_wb(.D(MemWrt_Data), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+wire [15:0]  Instr_WB, MemWrt_Data_WB;
+Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
+Register_16 MemWrt_Data_mem(.D(MemWrt_Data), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // I/O Test
 wire [15:0]  Instr_WB;
@@ -299,7 +298,7 @@ Register_1 HALT_id(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wr
 
 // Data Reg
 Register_16 MemRead_Data(.D(MemRead_Data_MEM), .Q(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 MemWrt_data(.D(MemAddr_Data_MEM), .Q(MemAddr_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 MemAddr(.D(MemAddr_MEM), .Q(MemAddr_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 
