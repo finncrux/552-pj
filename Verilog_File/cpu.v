@@ -26,7 +26,7 @@ wire PCWrite;
 wire PC_Rd, PC_Wrt, Ovfl;
 assign PC_Rd = 1'b1;
 assign PC_Wrt = 1'b0;
-
+assign pc = PC_Reg_OUT;
 //Stall Condition
 assign PCWrite = Stall ? 0 : 1;
 
@@ -48,7 +48,7 @@ memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg
 ////////////////////////////////////////////
 
 // I/O External
-wire [15:0] PC_ID, Instr_ID;
+wire [15:0] PC_ID, Instr_ID,PC_IF;
 
 // I/O Internal
 wire IF_ID_Write;   //Set to 0 if stall
@@ -56,7 +56,6 @@ wire IF_Flush;      //Set to 1 if flush
 
 assign IF_ID_Write = Stall ? 0 : 1;
 assign IF_Flush = Flush;
-
 // Data Reg
 Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
