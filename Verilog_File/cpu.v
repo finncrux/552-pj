@@ -242,7 +242,7 @@ Register_4 Rs_ex(.D(Rs_EX), .Q(Rs_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1)
 ////////////////////////////////////////////
 
 // I/O External
-wire [15:0] MemRead_Data_MEM;
+wire [15:0] MemRead_Data_MEM, MemWrt_Data;
 wire MemFWD;
 // Mem-Mem FWD MUX
 assign MemWrt_Data = MemFWD ? RegWrt_Data_WB : MemWrt_Data_MEM;
@@ -262,7 +262,7 @@ Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n || IF_
 //I/O Expose Control
 wire [3:0] ALUOp_WB;
 wire ALUSrc_WB, RegDst_WB;    //EX
-wire MemRead_WB, MemWrt_WB;   //M
+wire MemRead_WB, MemAddr_WB;   //M
 wire MemToReg_WB;  //WB
 wire halt_WB;
 // I/O Expose Data
@@ -284,8 +284,13 @@ Register_1 HALT_id(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wr
 
 // Data Reg
 Register_16 MemRead_Data(.D(MemRead_Data_MEM), .Q(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 MemWrt_data(.D(MemWrt_Data_MEM), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 MemWrt_data(.D(MemAddr_Data_MEM), .Q(MemAddr_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+
+
+
+
+
 
 ////////////////////////////////////////////
 // WB ////////////////////////////////////// OK
@@ -295,7 +300,12 @@ Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 //wire [15:0] RegWrt_Data_WB;
 assign hlt = halt_WB;
 //Select RegWrt Data
-assign RegWrt_Data_WB = MemToReg_WB ? MemRead_Data_WB : MemAddr_MEM;
+assign RegWrt_Data_WB = MemToReg_WB ? MemRead_Data_WB : MemAddr_WB;
+
+
+
+
+
 
 ////////////////////////////////////////////
 // FORWARDING UNIT ///////////////////////// OK
