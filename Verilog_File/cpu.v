@@ -34,7 +34,7 @@ assign PCWrite = Stall ? 0 : 1;
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
 
 //PC Reg
-pc_reg pcreg(.rst(rst), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite & !hlt));
+pc_reg pcreg(.rst(!rst_n), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite & !hlt));
 
 //PC Add 2
 addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
@@ -82,7 +82,9 @@ wire [15:0]PC_B, PC_BR;
 wire ovfl, ovfl1;
 wire [7:0]I;
 wire halt_ID;
-assign IF_Flush = Taken;
+wire Branch;
+assign IF_Flush = Taken & Branch;
+assign C= Instr_ID[11:9];
 assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b001)?F[2]:
                (C[2:0]==3'b010)?(!F[2]&(!F[0])):
@@ -99,11 +101,12 @@ assign RegWrt_ID = Stall? 1'b0 : writeReg1_en_ID;
 assign MemWrt_ID = Stall? 1'b0 : writeMem1_en_ID;
 assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
 assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
+assign Branch = (OPCODE1[3:1] == 3'b110);
 assign PC_BR = Rs_Data_ID;
 assign PC_Branch = Taken? (OPCODE1[0]? PC_B : PC_BR) : PC_ID;
 
 addsub_16bit adder_B(.A(PC_ID), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
-decoder decoder(.instruction(Instr_IF), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
+decoder decoder(.instruction(Instr_ID), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
                 .immediate_8bit(I), .offset_9bit(offset_9bit1), .condition(C), .writem_en(writeMem1_en_ID),
                 .writer_en(writeReg1_en_ID), .halt(halt_ID));
 
@@ -178,7 +181,7 @@ wire [15:0] RES_EX;            // ALU result
 // alu module
 wire [15:0] A,B,ExFWD_TEMP;
 assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
-assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:RtExFwd;
+assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:Rt_Data_EX;
 assign MemFwdSource = RegWrt_Data_WB;
 assign ExFwdSource = ExFWD_TEMP;
 wire ALU_OVFL;
@@ -335,6 +338,13 @@ wire[3:0] ID_EX_opocode, EX_MEM_opocode;            // Input: Operation on each 
 wire[3:0] EX_MEM_RD;                                // Input: Load destination
 wire[3:0] ID_EX_RS,ID_EX_RT;                        // Input: the regs that may need the newly loaded data
 // I/O End
+assign ID_EX_opocode = ALUOp_EX;
+assign EX_MEM_opocode = ALUOp_MEM;
+assign EX_MEM_RD = Rd_MEM;
+assign ID_EX_RS = Rs_EX;
+assign ID_EX_RT = Rt_EX;
+
+
 wire ID_EX_RT_NOIMMEDIATA;                          // Whether RT is actually needed
 wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passed in later stage
 assign ID_EX_RT_USED =                              // Not Shift related or PC related instruction
@@ -345,5 +355,6 @@ assign ID_EX_RT_NOFORWARDING=
 assign Stall =  ((ID_EX_opocode == 4'b1100)|(ID_EX_opocode == 4'b1101))|// B or BR
                 ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
                 &((ID_EX_RS == EX_MEM_RD)|((ID_EX_RT_NOFORWARDING & ID_EX_RT_USED)&
-                (ID_EX_RT == EX_MEM_RD))));          // RT is actually used and no forwarding here.
+                (ID_EX_RT == EX_MEM_RD)))) ? 1 : 0;          // RT is actually used and no forwarding here.
+assign Branch_Hazard = Taken;
 endmodule
