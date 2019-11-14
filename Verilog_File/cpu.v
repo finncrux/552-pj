@@ -54,7 +54,7 @@ memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg
 
 // I/O External
 wire [15:0] PC_ID, Instr_ID,PC_IF;
-
+assign PC_IF = PC_Reg_OUT;
 // I/O Internal
 wire IF_ID_Write;   //Set to 0 if stall
 wire IF_Flush;      //Set to 1 if flush
@@ -107,7 +107,7 @@ assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
 assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
 assign Branch = (OPCODE1[3:1] == 3'b110);
 assign PC_BR = Rs_Data_ID;
-assign PC_Branch = (Taken&Branch)? (OPCODE1[0]? PC_B : PC_BR) : PC_ID;
+assign PC_Branch = (Taken&Branch)? (OPCODE1[0]? PC_BR : PC_B) : PC_ID;
 
 addsub_16bit adder_B(.A(PC_ID), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
 decoder decoder(.instruction(Instr_ID), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
