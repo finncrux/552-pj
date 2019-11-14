@@ -10,6 +10,7 @@ wire Flush;             //From Hazard Detection
 wire wrtEn_1;
 assign wrtEn_1 = 1;
 
+
 ////////////////////////////////////////////
 // IF ////////////////////////////////////// OK
 ////////////////////////////////////////////
@@ -22,6 +23,7 @@ wire [15:0] PC_Branch;  //PC value, if added from branch offset
 wire [15:0] PC_Reg_IN, PC_Reg_OUT, Instr_IF;
 wire [15:0] PC_2;
 wire PCWrite;
+wire Halt_IF;
 
 wire PC_Rd, PC_Wrt, Ovfl;
 assign PC_Rd = 1'b1;
@@ -31,13 +33,13 @@ assign pc = PC_Reg_OUT;
 assign PCWrite = Stall ? 0 : 1;
 
 //halt condition
-assign hlt = &Instr_IF[15:12];
+assign Halt_IF = &Instr_IF[15:12];
 
 //PC Reg IN Select Mux
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
 
 //PC Reg
-pc_reg pcreg(.rst(!rst_n), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite & !hlt));
+pc_reg pcreg(.rst(!rst_n), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite & !Halt_IF));
 
 //PC Add 2
 addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
@@ -95,7 +97,7 @@ assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b101)?((F[0]|(F[2]))):
                (C[2:0]==3'b110)?(F[1]):
                1'b1;
-assign MemRead_ID = Stall? 1'b0 : (ALUOp_ID == 4'b1000);
+assign MemRead_ID = Stall? 1'b0 : (ALUOp_ID[3:1] == 3'b100);
 assign MemToReg_ID = (OPCODE1 == 4'b1000);
 assign IMM_ID = {{8{I[7]}}, I};
 assign MEM_DATA_RD_EN_ID = OPCODE1[3]&!OPCODE1[2]&!OPCODE1[1];
@@ -182,8 +184,8 @@ wire [15:0] RES_EX;            // ALU result
 
 // alu module
 wire [15:0] A,B,ExFWD_TEMP;
-assign A = RsMemFwd?MemFwdSource:RsExFwd?ExFwdSource:Rs_Data_EX;
-assign B = RtMemFwd?MemFwdSource:RtExFwd?ExFwdSource:Rt_Data_EX;
+assign A = RsExFwd?ExFwdSource:RsMemFwd?MemFwdSource:Rs_Data_EX;
+assign B = RtExFwd?ExFwdSource:RtMemFwd?MemFwdSource:Rt_Data_EX;
 assign MemFwdSource = RegWrt_Data_WB;
 assign ExFwdSource = ExFWD_TEMP;
 wire ALU_OVFL;
@@ -308,7 +310,7 @@ Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 
 // I/O External
 //wire [15:0] RegWrt_Data_WB;
-//assign hlt = halt_ID;
+assign hlt = halt_WB;
 //Select RegWrt Data
 assign RegWrt_Data_WB = MemToReg_WB ? MemRead_Data_WB : MemAddr_WB;
 
@@ -321,10 +323,11 @@ assign RegWrt_Data_WB = MemToReg_WB ? MemRead_Data_WB : MemAddr_WB;
 // FORWARDING UNIT ///////////////////////// OK
 ////////////////////////////////////////////
 
-FWDunit fwd(.EX_MEM_Opocode(ALUOp_EX),.MEM_WB_Opocode(ALUOp_WB),
+FWDunit fwd(.EX_MEM_Opocode(ALUOp_MEM),.MEM_WB_Opocode(ALUOp_WB),.ID_EX_Opocode(ALUOp_EX),
            .ID_EX_Rs(Rs_EX),  .ID_EX_Rt(Rt_EX),                 
            .EX_MEM_Rd(Rd_MEM), 
            .MEM_WB_Rd(Rd_WB), 
+           .ID_EX_Rd(Rd_EX),
            .ID_EX_Rs_EX_Fwd(RsExFwd) , .ID_EX_Rt_EX_Fwd(RtExFwd) ,
            .ID_EX_Rs_MEM_Fwd(RsMemFwd) , .ID_EX_Rt_MEM_Fwd(RtMemFwd),
            .MEM_TO_MEM_Fwd(MemFWD));
