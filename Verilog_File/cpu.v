@@ -103,7 +103,7 @@ assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
 assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
 assign Branch = (OPCODE1[3:1] == 3'b110);
 assign PC_BR = Rs_Data_ID;
-assign PC_Branch = Taken? (OPCODE1[0]? PC_B : PC_BR) : PC_ID;
+assign PC_Branch = (Taken&Branch)? (OPCODE1[0]? PC_B : PC_BR) : PC_ID;
 
 addsub_16bit adder_B(.A(PC_ID), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
 decoder decoder(.instruction(Instr_ID), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
@@ -356,5 +356,5 @@ assign Stall =  ((ID_EX_opocode == 4'b1100)|(ID_EX_opocode == 4'b1101))|// B or 
                 ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
                 &((ID_EX_RS == EX_MEM_RD)|((ID_EX_RT_NOFORWARDING & ID_EX_RT_USED)&
                 (ID_EX_RT == EX_MEM_RD)))) ? 1 : 0;          // RT is actually used and no forwarding here.
-assign Branch_Hazard = Taken;
+assign Branch_Hazard = Taken&Branch;
 endmodule
