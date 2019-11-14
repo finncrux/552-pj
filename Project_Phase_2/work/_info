@@ -1,0 +1,663 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/Users/Dong He/OneDrive/UWM/ECE552/proj_phase2
+vaddsub_16bit
+Z0 !s110 1573694659
+!i10b 1
+!s100 Wk9=enI8_FP?]Tjb2316A2
+IWe^Langf:b;jPaW?ICcd`0
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+Z2 dC:/Users/Dong He/OneDrive/Github/552-pj/Project_Phase_2
+w1571194580
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/addsub_16bit.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/addsub_16bit.v
+L0 1
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1573694659.000000
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/addsub_16bit.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/addsub_16bit.v|
+!i113 1
+Z5 o-work work
+Z6 tCvgOpt 0
+vALU
+R0
+!i10b 1
+!s100 4BTbf6DzT0UKkJ`>POgk@1
+I;104VeIjKNGeI@am]W[B^0
+R1
+R2
+w1573413611
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ALU.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ALU.v
+L0 4
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ALU.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ALU.v|
+!i113 1
+R5
+R6
+n@a@l@u
+vBitCell
+Z7 !s110 1573694660
+!i10b 1
+!s100 F94;kMSV@zI9P1`[G6el32
+IE611k5IWnz64W<3nI5NNe3
+R1
+R2
+w1573413242
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/BitCell.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/BitCell.v
+L0 1
+R3
+r1
+!s85 0
+31
+Z8 !s108 1573694660.000000
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/BitCell.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/BitCell.v|
+!i113 1
+R5
+R6
+n@bit@cell
+vCLA_4bit
+R7
+!i10b 1
+!s100 n^OVC4A1OHP@MCdJT@7Oo3
+I@jW4G_P9ToMXYQ6zD5j;R0
+R1
+R2
+w1573412097
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/CLA.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/CLA.v
+L0 2
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/CLA.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/CLA.v|
+!i113 1
+R5
+R6
+n@c@l@a_4bit
+vcpu
+R7
+!i10b 1
+!s100 Zl15^m:cb_n]WEY;CmaoJ3
+I3ze9kYK]hzei3zdV]gN;Q1
+R1
+R2
+Z9 w1573694116
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/cpu.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/cpu.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/cpu.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/cpu.v|
+!i113 1
+R5
+R6
+vcpu_ptb
+R0
+!i10b 1
+!s100 5Y`_Ok4KTYk=WeDolj]b_2
+IUGF:h=F2@SPPd<AdVP:@g1
+R1
+R2
+Z10 w1573619088
+8C:/Users/Dong He/OneDrive/Github/552-pj/Testbench/project-phase2-testbench.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Testbench/project-phase2-testbench.v
+L0 1
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Testbench/project-phase2-testbench.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Testbench/project-phase2-testbench.v|
+!i113 1
+R5
+R6
+vdecode_stage
+R7
+!i10b 1
+!s100 PWQV<1:=TkH_BbN8l`m6e0
+I:_a>Jg6Q=7YoSJQ^`3H7B2
+R1
+R2
+w1573423535
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decode_stage.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decode_stage.v
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decode_stage.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decode_stage.v|
+!i113 1
+R5
+R6
+vdecoder
+R7
+!i10b 1
+!s100 k[BmZZcR3anMI1MH@Xj;:3
+IjFmgdKY:mgch^OdCU]R3e1
+R1
+R2
+w1573413629
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decoder.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decoder.v
+L0 4
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decoder.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/decoder.v|
+!i113 1
+R5
+R6
+vdff
+R7
+!i10b 1
+!s100 PV_CoVVQ]?nI;J@mj=Gn=3
+IJHoIM_SjTglLMKgj:i3GT0
+R1
+R2
+Z11 w1571189068
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/D-Flip-Flop.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/D-Flip-Flop.v
+L0 3
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/D-Flip-Flop.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/D-Flip-Flop.v|
+!i113 1
+R5
+R6
+vfull_adder_1bit
+DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
+R7
+!i10b 1
+!s100 8QL1>@@gE7l]8aZAS^FzI1
+IzZ;7^@a_2<d7eG]FG2dBS2
+R1
+!s105 full_adder_1bit_sv_unit
+S1
+R2
+R11
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/full_adder_1bit.sv
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/full_adder_1bit.sv
+L0 1
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/full_adder_1bit.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/full_adder_1bit.sv|
+!i113 1
+o-work work -sv
+R6
+vFWDunit
+R7
+!i10b 1
+!s100 ;X2@O1idklUb6Id>aj>;b2
+IcgkzC08l@]NP9z5Lf3k;22
+R1
+R2
+w1573666463
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/forwarding.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/forwarding.v
+L0 8
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/forwarding.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/forwarding.v|
+!i113 1
+R5
+R6
+n@f@w@dunit
+vmemory1c
+R7
+!i10b 1
+!s100 z?Z580:J9UO?2@dWG^`m53
+IDm_di81>;DKXmW2=@UcGh3
+R1
+R2
+R11
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory.v
+Z12 L0 31
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory.v|
+!i113 1
+R5
+R6
+vmemory_D
+R7
+!i10b 1
+!s100 <OZeAE_f`@[3Jc51PAm_53
+IOFSS[QNHGlNc^UjFcAT[j2
+R1
+R2
+w1573183990
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_D.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_D.v
+R12
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_D.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_D.v|
+!i113 1
+R5
+R6
+nmemory_@d
+vmemory_I
+Z13 !s110 1573694661
+!i10b 1
+!s100 4X`mFzN?_IWF3l3_<beb^1
+I4G3NW^DEN;HjiLBEjo0HG3
+R1
+R2
+R9
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_I.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_I.v
+R12
+R3
+r1
+!s85 0
+31
+R8
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_I.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/memory_I.v|
+!i113 1
+R5
+R6
+nmemory_@i
+vPADDSB
+R13
+!i10b 1
+!s100 ^>eVJIFihSi;2ooEmDlEV2
+I2_5Z1@SGnn=aD=a7c]5=a3
+R1
+R2
+w1571196460
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PADDSB.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PADDSB.v
+L0 1
+R3
+r1
+!s85 0
+31
+Z14 !s108 1573694661.000000
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PADDSB.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PADDSB.v|
+!i113 1
+R5
+R6
+n@p@a@d@d@s@b
+vPC
+R13
+!i10b 1
+!s100 USKLb<C<PZHnOZ8n:bJf=1
+IbFd@HFgNC=46UnN]Fj<QH3
+R1
+R2
+w1571280718
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC.v|
+!i113 1
+R5
+R6
+n@p@c
+vPC_control
+R13
+!i10b 1
+!s100 Ij<TeZdh^KaRhTQ7^57k>0
+I8FIaZEb8=E3KB?L>^FT<]2
+R1
+R2
+w1571197553
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC_control.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC_control.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC_control.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PC_control.v|
+!i113 1
+R5
+R6
+n@p@c_control
+vpc_reg
+R13
+!i10b 1
+!s100 ?8?MB?[2]O7[l[dOMVIKM1
+I0Y_lYAe?9WMA=9NWg72743
+R1
+R2
+w1573423853
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/pc_reg.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/pc_reg.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/pc_reg.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/pc_reg.v|
+!i113 1
+R5
+R6
+vPFA
+R13
+!i10b 1
+!s100 6R`70X[o<Oe6;Q7b^6WTW0
+I;XidfO4V=ML^EMNz_:F2^0
+R1
+R2
+w1571189819
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PFA.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PFA.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PFA.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/PFA.v|
+!i113 1
+R5
+R6
+n@p@f@a
+vReadDecoder_4_16
+R13
+!i10b 1
+!s100 ;D;GIh1l6AD@OAWd9a2bl2
+ICQo<N=FDV>a`DXBBA=@F72
+R1
+R2
+R10
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ReadDecoder_4_16.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ReadDecoder_4_16.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ReadDecoder_4_16.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/ReadDecoder_4_16.v|
+!i113 1
+R5
+R6
+n@read@decoder_4_16
+vRED
+R13
+!i10b 1
+!s100 ;;TESXO0iVTc<ZO=l6<?60
+I3H?QbL5DdFOzn1g5>QYYj1
+R1
+R2
+Z15 w1571197543
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED.v|
+!i113 1
+R5
+R6
+n@r@e@d
+vRED_tb
+R13
+!i10b 1
+!s100 c8gQ:3=Y1ecM:0;>PfNFQ3
+IB4RE5=Qzg_Cbh=4jnh0>k1
+R1
+R2
+R15
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED_tb.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED_tb.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED_tb.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RED_tb.v|
+!i113 1
+R5
+R6
+n@r@e@d_tb
+vRegister
+R13
+!i10b 1
+!s100 b8XfK]f@HDV?ADf<WC2R:2
+IE1dcBHQGHo551oZMT4K2h1
+R1
+R2
+R11
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register.v
+L0 1
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register.v|
+!i113 1
+R5
+R6
+n@register
+vRegister_1
+R13
+!i10b 1
+!s100 84UzYTX[0Moahm<nDi@kn2
+Ib_HgO=?NXQ8fiF8zM>@C[1
+R1
+R2
+w1573413440
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_1.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_1.v
+L0 2
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_1.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_1.v|
+!i113 1
+R5
+R6
+n@register_1
+vRegister_16
+Z16 !s110 1573694662
+!i10b 1
+!s100 jLmEAP]b9ANTmOoO1Zf4N2
+I=iXKEQnLPJ`71TnHj^MZ21
+R1
+R2
+w1573413020
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_16.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_16.v
+L0 2
+R3
+r1
+!s85 0
+31
+Z17 !s108 1573694662.000000
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_16.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_16.v|
+!i113 1
+R5
+R6
+n@register_16
+vRegister_3
+R13
+!i10b 1
+!s100 ZHST]:oJ2L:LW]]YZ[8BX0
+IeGA;z=M6<MmXgFF=0C;6<0
+R1
+R2
+w1573412071
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_3.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_3.v
+L0 2
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_3.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_3.v|
+!i113 1
+R5
+R6
+n@register_3
+vRegister_4
+R16
+!i10b 1
+!s100 KPCDU>7R6JATR3bHg_O7n0
+IK1U6hJh2e2aIz6U=@I1zN3
+R1
+R2
+w1573413519
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_4.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_4.v
+L0 2
+R3
+r1
+!s85 0
+31
+R14
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_4.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/Register_4.v|
+!i113 1
+R5
+R6
+n@register_4
+vRegisterFile
+R16
+!i10b 1
+!s100 bj^lb8hE:o[Ha:jU8kU5I1
+Id_Y[HH5@0cm<MV_M<3BzG0
+R1
+R2
+R11
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RegisterFile.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RegisterFile.v
+L0 1
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RegisterFile.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/RegisterFile.v|
+!i113 1
+R5
+R6
+n@register@file
+vshifter
+R16
+!i10b 1
+!s100 f85jjk9co=o@][ag0hA2Q1
+I>b`jjkhBZAzFX_7Z47f_O1
+R1
+R2
+R11
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/shifter.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/shifter.v
+L0 1
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/shifter.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/shifter.v|
+!i113 1
+R5
+R6
+vWriteDecoder_4_16
+R16
+!i10b 1
+!s100 X=5DSZQ^ROL:N4m;MMl>d3
+Im7Po@JS3gOLkH0i;94ToR3
+R1
+R2
+R10
+8C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/WriteDecoder_4_16.v
+FC:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/WriteDecoder_4_16.v
+L0 1
+R3
+r1
+!s85 0
+31
+R17
+!s107 C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/WriteDecoder_4_16.v|
+!s90 -reportprogress|300|-work|work|-stats=none|C:/Users/Dong He/OneDrive/Github/552-pj/Verilog_File/WriteDecoder_4_16.v|
+!i113 1
+R5
+R6
+n@write@decoder_4_16
