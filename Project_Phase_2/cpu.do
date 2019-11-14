@@ -18,16 +18,22 @@ add wave -noupdate -radix decimal -radixshowbase 0 /cpu_ptb/inst_count
 add wave -noupdate /cpu_ptb/rst_n
 add wave -noupdate /cpu_ptb/sim_log_file
 add wave -noupdate /cpu_ptb/trace_file
+add wave -noupdate /cpu_ptb/DUT/halt_ID
+add wave -noupdate /cpu_ptb/DUT/halt_EX
+add wave -noupdate /cpu_ptb/DUT/halt_MEM
+add wave -noupdate /cpu_ptb/DUT/halt_WB
 add wave -noupdate -divider CPU_Internal
 add wave -noupdate /cpu_ptb/DUT/IF_Flush
 add wave -noupdate /cpu_ptb/DUT/Stall
 add wave -noupdate -divider PC
-add wave -noupdate /cpu_ptb/DUT/PC_Reg_OUT
+add wave -noupdate -radix decimal -radixshowbase 0 /cpu_ptb/DUT/PC_Reg_OUT
 add wave -noupdate /cpu_ptb/DUT/Taken
 add wave -noupdate /cpu_ptb/DUT/Branch
 add wave -noupdate /cpu_ptb/DUT/F
 add wave -noupdate /cpu_ptb/DUT/C
 add wave -noupdate /cpu_ptb/DUT/Instr_IF
+add wave -noupdate /cpu_ptb/DUT/PC_Wrt
+add wave -noupdate /cpu_ptb/DUT/PCWrite
 add wave -noupdate -divider ID
 add wave -noupdate /cpu_ptb/DUT/Instr_ID
 add wave -noupdate /cpu_ptb/DUT/Rt_ID
@@ -37,7 +43,7 @@ add wave -noupdate -divider EX
 add wave -noupdate /cpu_ptb/DUT/A
 add wave -noupdate /cpu_ptb/DUT/B
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {394 ns} 0}
+WaveRestoreCursors {{Cursor 1} {1185 ns} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 100
@@ -53,4 +59,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ns} {1282 ns}
+WaveRestoreZoom {388 ns} {1670 ns}
