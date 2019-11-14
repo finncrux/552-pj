@@ -240,7 +240,7 @@ Register_1 HALT_ex(.D(halt_EX), .Q(halt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(!h
 
 // Data Reg
 Register_16 RES_Reg(.D(RES_EX), .Q(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 B_Reg(.D(B), .Q(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 B_Reg(.D(A), .Q(MemWrt_Data_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_4 Rd_ex(.D(Rd_EX), .Q(Rd_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_4 Rs_ex(.D(Rs_EX), .Q(Rs_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
@@ -352,14 +352,14 @@ assign ID_EX_RT = Rt_EX;
 
 wire ID_EX_RT_NOIMMEDIATA;                          // Whether RT is actually needed
 wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passed in later stage
-assign ID_EX_RT_USED =                              // Not Shift related or PC related instruction
+assign ID_EX_RS_USED =                              // Not Shift related or PC related instruction
                 ID_EX_opocode[3:2]!=2'b11 & !((ID_EX_opocode[3:2]==2'b01)&(ID_EX_opocode!=4'b0111));
-assign ID_EX_RT_NOFORWARDING=
+assign ID_EX_RS_NOFORWARDING=
                 ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall 
                                                     // need since we can get the data by forwarding.
 assign Stall =  ((ID_EX_opocode == 4'b1100)|(ID_EX_opocode == 4'b1101))|// B or BR
                 ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
-                &((ID_EX_RS == EX_MEM_RD)|((ID_EX_RT_NOFORWARDING & ID_EX_RT_USED)&
-                (ID_EX_RT == EX_MEM_RD)))) ? 1 : 0;          // RT is actually used and no forwarding here.
+                &((ID_EX_RT == EX_MEM_RD)|((ID_EX_RS_NOFORWARDING & ID_EX_RS_USED)&
+                (ID_EX_RS == EX_MEM_RD)))) ? 1 : 0;          // RT is actually used and no forwarding here.
 assign Branch_Hazard = Taken&Branch;
 endmodule
