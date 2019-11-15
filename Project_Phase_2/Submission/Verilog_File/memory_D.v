@@ -28,7 +28,7 @@
 //
 //////////////////////////////////////
 
-module memory_I (data_out, data_in, addr, enable, wr, clk, rst);
+module memory_D (data_out, data_in, addr, enable, wr, clk, rst);
 
    parameter ADDR_WIDTH = 16;
    output  [15:0] data_out;
@@ -52,7 +52,7 @@ module memory_I (data_out, data_in, addr, enable, wr, clk, rst);
       if (rst) begin
          //load loadfile_all.img
          if (!loaded) begin
-            $readmemh("test3.txt", mem);
+            $readmemh("empty.txt", mem);
             loaded = 1;
          end
           
