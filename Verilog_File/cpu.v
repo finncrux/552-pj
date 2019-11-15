@@ -33,8 +33,8 @@ assign pc = PC_Reg_OUT;
 assign PCWrite = Stall ? 0 : 1;
 
 //halt condition
-wire NotFlush;
-assign Halt_IF = (&Instr_IF[15:12])&(!NotFlush);
+wire IF_Flush;      //Set to 1 if flush
+assign Halt_IF = (&Instr_IF[15:12])&(!IF_Flush);
 
 //PC Reg IN Select Mux
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
@@ -58,8 +58,7 @@ wire [15:0] PC_ID, Instr_ID,PC_IF,PC_IN_ID;
 assign PC_IF = PC_Reg_OUT;
 // I/O Internal
 wire IF_ID_Write;   //Set to 0 if stall
-wire IF_Flush;      //Set to 1 if flush
-assign NotFlush = IF_Flush;
+
 assign IF_ID_Write = Stall ? 0 : 1;
 // Data Reg
 Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
@@ -106,12 +105,12 @@ assign MEM_DATA_RD_EN_ID = OPCODE1[3]&!OPCODE1[2]&!OPCODE1[1];
 assign RegWrt_ID = Stall? 1'b0 : writeReg1_en_ID;
 assign MemWrt_ID = Stall? 1'b0 : writeMem1_en_ID;
 assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
-assign ALUOp_ID = Stall? 1'b0 : OPCODE1;
+assign ALUOp_ID = Stall? 4'b0 : OPCODE1;
 assign Branch = (OPCODE1[3:1] == 3'b110);
 assign PC_BR = Rs_Data_ID;
 assign PC_Branch = (Taken&Branch)? (OPCODE1[0]? PC_BR : PC_B) : PC_ID;
 
-addsub_16bit adder_B(.A(PC_ID), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
+addsub_16bit adder_B(.A(PC_Reg_OUT), .B({{7{offset_9bit1[8]}}, offset_9bit1}), .sub(1'b0), .Sum(PC_B), .Ovfl(ovfl1));
 decoder decoder(.instruction(Instr_ID), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID), .rd(Rd_ID), 
                 .immediate_8bit(I), .offset_9bit(offset_9bit1), .condition(C), .writem_en(writeMem1_en_ID),
                 .writer_en(writeReg1_en_ID), .halt(halt_ID));
@@ -206,9 +205,10 @@ assign FlagFromAlu = {(RES_EX==0),(ALU_OVFL),(RES_EX[15]==1)};
 assign WriteEnableN =!(|ALUOp_EX[3:1]);
 assign WriteEnableZ = WriteEnableN|(ALUOp_EX==4'b0010)|(ALUOp_EX==4'b0100)|(ALUOp_EX==4'b0101)|(ALUOp_EX==4'b0110);
 assign WriteEnableV =!(|ALUOp_EX[3:1]);
-Register_3 FLAGREG(.Q(F),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN),
+wire [3:0] Flag_REG_OUT;
+Register_3 FLAGREG(.Q(Flag_REG_OUT),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN),
                     .WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
-
+assign F = {{!WriteEnableZ?Flag_REG_OUT[2]:FlagFromAlu[2]},{!WriteEnableV?Flag_REG_OUT[1]:FlagFromAlu[1]},{!WriteEnableN?Flag_REG_OUT[0]:FlagFromAlu[0]}};
 ////////////////////////////////////////////
 // EX/MEM Reg ////////////////////////////// OK
 ////////////////////////////////////////////
@@ -362,9 +362,11 @@ assign ID_EX_RS_USED =                              // Not Shift related or PC r
 assign ID_EX_RS_NOFORWARDING=
                 ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall 
                                                     // need since we can get the data by forwarding.
-assign Stall =  ((ALUOp_ID == 4'b1100)|(ALUOp_ID == 4'b1101))|// B or BR
-                ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
-                &((ID_EX_RT == EX_MEM_RD)|((ID_EX_RS_NOFORWARDING & ID_EX_RS_USED)&
-                (ID_EX_RS == EX_MEM_RD))));          // RT is actually used and no forwarding here.
+assign Stall =  //(((ALUOp_ID == 4'b1100)|(ALUOp_ID == 4'b1101))&!IF_Flush)|// B or BR
+                ((EX_MEM_opocode == 4'b1000)         // the memstage is loading
+                &(((ID_EX_RT == EX_MEM_RD)|((ID_EX_RS_NOFORWARDING & ID_EX_RS_USED)&(ID_EX_RS == EX_MEM_RD)))
+                                                     // the ex stage needs the loaded data
+                |((ALUOp_ID == 4'b1101)&(Rs_ID==EX_MEM_RD))));          // the ID stage needs the loaded data
+                // RT is actually used and no forwarding here.
 assign Branch_Hazard = Taken&Branch;
 endmodule

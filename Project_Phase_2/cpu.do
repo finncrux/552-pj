@@ -22,6 +22,7 @@ add wave -noupdate /cpu_ptb/DUT/halt_ID
 add wave -noupdate /cpu_ptb/DUT/halt_EX
 add wave -noupdate /cpu_ptb/DUT/halt_MEM
 add wave -noupdate /cpu_ptb/DUT/halt_WB
+add wave -noupdate -divider OPCODE
 add wave -noupdate -divider CPU_Internal
 add wave -noupdate /cpu_ptb/DUT/IF_Flush
 add wave -noupdate /cpu_ptb/DUT/Stall
