@@ -33,7 +33,8 @@ assign pc = PC_Reg_OUT;
 assign PCWrite = Stall ? 0 : 1;
 
 //halt condition
-assign Halt_IF = &Instr_IF[15:12];
+wire NotFlush;
+assign Halt_IF = (&Instr_IF[15:12])&(!NotFlush);
 
 //PC Reg IN Select Mux
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
@@ -53,12 +54,12 @@ memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg
 ////////////////////////////////////////////
 
 // I/O External
-wire [15:0] PC_ID, Instr_ID,PC_IF;
+wire [15:0] PC_ID, Instr_ID,PC_IF,PC_IN_ID;
 assign PC_IF = PC_Reg_OUT;
 // I/O Internal
 wire IF_ID_Write;   //Set to 0 if stall
 wire IF_Flush;      //Set to 1 if flush
-
+assign NotFlush = IF_Flush;
 assign IF_ID_Write = Stall ? 0 : 1;
 // Data Reg
 Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
@@ -89,7 +90,7 @@ wire [7:0]I;
 wire halt_ID;
 wire Branch;
 assign IF_Flush = Taken & Branch;
-assign C= Instr_ID[11:9];
+//assign C= Instr_ID[11:9];
 assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b001)?F[2]:
                (C[2:0]==3'b010)?(!F[2]&(!F[0])):
@@ -160,7 +161,7 @@ Register_1 MemWrite_id(.D(MemWrt_ID), .Q(MemWrt_EX), .clk(clk), .rst(!rst_n), .w
 // Control Reg WB
 Register_1 MemToReg_id(.D(MemToReg_ID), .Q(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_id(.D(RegWrt_ID), .Q(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 PC_IN_ID(.D(PC_IN_ID), .Q(PC_IN_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_16 PC_IN_id(.D(PC_IN_ID), .Q(PC_IN_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
 Register_16 RegRead1(.D(Rs_Data_ID), .Q(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -343,16 +344,16 @@ FWDunit fwd(.EX_MEM_Opocode(ALUOp_MEM),.MEM_WB_Opocode(ALUOp_WB),.ID_EX_Opocode(
 // Detect load to use stall only!!! 
 // The Stall Signal is passed to the ID/EX stage!!!
 // I/O exposed
-wire[3:0] ID_EX_opocode, EX_MEM_opocode;            // Input: Operation on each stage
-wire[3:0] EX_MEM_RD;                                // Input: Load destination
-wire[3:0] ID_EX_RS,ID_EX_RT;                        // Input: the regs that may need the newly loaded data
+wire[3:0] ID_EX_opocode, EX_MEM_opocode, IF_ID_opcode;  // Input: Operation on each stage
+wire[3:0] EX_MEM_RD;                                    // Input: Load destination
+wire[3:0] ID_EX_RS,ID_EX_RT;                            // Input: the regs that may need the newly loaded data
 // I/O End
 assign ID_EX_opocode = ALUOp_EX;
 assign EX_MEM_opocode = ALUOp_MEM;
 assign EX_MEM_RD = Rd_MEM;
 assign ID_EX_RS = Rs_EX;
 assign ID_EX_RT = Rt_EX;
-
+assign IF_ID_opcode = ALUOp_ID;
 
 wire ID_EX_RT_NOIMMEDIATA;                          // Whether RT is actually needed
 wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passed in later stage
@@ -361,9 +362,9 @@ assign ID_EX_RS_USED =                              // Not Shift related or PC r
 assign ID_EX_RS_NOFORWARDING=
                 ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall 
                                                     // need since we can get the data by forwarding.
-assign Stall =  ((ID_EX_opocode == 4'b1100)|(ID_EX_opocode == 4'b1101))|// B or BR
+assign Stall =  ((ALUOp_ID == 4'b1100)|(ALUOp_ID == 4'b1101))|// B or BR
                 ((EX_MEM_opocode == 4'b1000)         // the memstage is storing
                 &((ID_EX_RT == EX_MEM_RD)|((ID_EX_RS_NOFORWARDING & ID_EX_RS_USED)&
-                (ID_EX_RS == EX_MEM_RD)))) ? 1 : 0;          // RT is actually used and no forwarding here.
+                (ID_EX_RS == EX_MEM_RD))));          // RT is actually used and no forwarding here.
 assign Branch_Hazard = Taken&Branch;
 endmodule
