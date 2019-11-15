@@ -63,6 +63,7 @@ assign IF_ID_Write = Stall ? 0 : 1;
 // Data Reg
 Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
+Register_16 PC_IN_IF(.D(PC_Reg_IN), .Q(PC_IN_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 
 
 ////////////////////////////////////////////
@@ -133,7 +134,7 @@ RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), 
 ////////////////////////////////////////////
 
 // I/O Test
-wire [15:0]  Instr_EX,PC_EX;
+wire [15:0]  Instr_EX,PC_IN_EX;
 Register_16 Instr_id(.D(Instr_ID), .Q(Instr_EX), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
 
 // I/O Control
@@ -159,7 +160,7 @@ Register_1 MemWrite_id(.D(MemWrt_ID), .Q(MemWrt_EX), .clk(clk), .rst(!rst_n), .w
 // Control Reg WB
 Register_1 MemToReg_id(.D(MemToReg_ID), .Q(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_id(.D(RegWrt_ID), .Q(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 PC_X(.D(PC_Reg_IN), .Q(PC_EX), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
+Register_16 PC_IN_ID(.D(PC_IN_ID), .Q(PC_IN_EX), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 
 // Data Reg
 Register_16 RegRead1(.D(Rs_Data_ID), .Q(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -212,7 +213,7 @@ Register_3 FLAGREG(.Q(F),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(Wr
 ////////////////////////////////////////////
 
 // I/O Test
-wire [15:0]  Instr_MEM,PC_MEM;
+wire [15:0]  Instr_MEM,PC_IN_MEM;
 Register_16 Instr_ex(.D(Instr_EX), .Q(Instr_MEM), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
 
 //I/O Expose Control
@@ -238,7 +239,7 @@ Register_1 MemWrite_ex(.D(MemWrt_EX), .Q(MemWrt_MEM), .clk(clk), .rst(!rst_n), .
 Register_1 MemToReg_ex(.D(MemToReg_EX), .Q(MemToReg_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_ex(.D(RegWrt_EX), .Q(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 HALT_ex(.D(halt_EX), .Q(halt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(!halt_MEM));
-Register_16 PC_M(.D(PC_EX), .Q(PC_MEM), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
+Register_16 PC_IN_M(.D(PC_IN_EX), .Q(PC_IN_MEM), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 
 // Data Reg
 Register_16 RES_Reg(.D(RES_EX), .Q(MemAddr_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -273,7 +274,7 @@ memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(Me
 ////////////////////////////////////////////
 
 // I/O Test
-wire [15:0]  Instr_WB, MemWrt_Data_WB,PC_WB;
+wire [15:0]  Instr_WB, MemWrt_Data_WB,PC_IN_WB;
 Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n || IF_Flush), .wrtEn(IF_ID_Write));
 Register_16 MemWrt_Data_mem(.D(MemWrt_Data), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
@@ -299,7 +300,7 @@ Register_1 MemWrite_mem(.D(MemWrt_MEM), .Q(MemWrt_WB), .clk(clk), .rst(!rst_n), 
 Register_1 MemToReg_mem(.D(MemToReg_MEM), .Q(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_mem(.D(RegWrt_MEM), .Q(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 HALT_mem(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(!halt_WB));
-Register_16 PC_W(.D(PC_MEM), .Q(PC_WB), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
+Register_16 PC_IN_W(.D(PC_IN_MEM), .Q(PC_IN_WB), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 
 // Data Reg
 Register_16 MemRead_Data(.D(MemRead_Data_MEM), .Q(MemRead_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -315,7 +316,7 @@ Register_4 Rd_mem(.D(Rd_MEM), .Q(Rd_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1
 //wire [15:0] RegWrt_Data_WB;
 assign hlt = halt_WB;
 //Select RegWrt Data
-assign RegWrt_Data_WB = (ALUOp_WB==4'b1110) ? PC_WB : MemToReg_WB ? MemRead_Data_WB : MemAddr_WB;
+assign RegWrt_Data_WB = (ALUOp_WB==4'b1110) ? PC_IN_WB : MemToReg_WB ? MemRead_Data_WB : MemAddr_WB;
 
 
 
