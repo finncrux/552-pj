@@ -159,7 +159,7 @@ Register_1 MemWrite_id(.D(MemWrt_ID), .Q(MemWrt_EX), .clk(clk), .rst(!rst_n), .w
 // Control Reg WB
 Register_1 MemToReg_id(.D(MemToReg_ID), .Q(MemToReg_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_id(.D(RegWrt_ID), .Q(RegWrt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_16 PC_X(.D(PC_ID), .Q(PC_EX), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
+Register_16 PC_X(.D(PC_Reg_OUT), .Q(PC_EX), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
 
 // Data Reg
 Register_16 RegRead1(.D(Rs_Data_ID), .Q(Rs_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
