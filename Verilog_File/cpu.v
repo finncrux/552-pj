@@ -105,7 +105,7 @@ assign MEM_DATA_RD_EN_ID = OPCODE1[3]&!OPCODE1[2]&!OPCODE1[1];
 assign RegWrt_ID = Stall? 1'b0 : writeReg1_en_ID;
 assign MemWrt_ID = Stall? 1'b0 : writeMem1_en_ID;
 assign MEM_DATA_RD_EN_ID = Stall? 1'b0 : MEM_DATA_RD_EN1_ID;
-assign ALUOp_ID = Stall? 4'b0 : OPCODE1;
+assign ALUOp_ID = Stall? 4'b0000 : OPCODE1;
 assign Branch = (OPCODE1[3:1] == 3'b110);
 assign PC_BR = Rs_Data_ID;
 assign PC_Branch = (Taken&Branch)? (OPCODE1[0]? PC_BR : PC_B) : PC_ID;
@@ -167,9 +167,9 @@ Register_16 RegRead1(.D(Rs_Data_ID), .Q(Rs_Data_EX), .clk(clk), .rst(!rst_n), .w
 Register_16 RegRead2(.D(Rt_Data_ID), .Q(Rt_Data_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_16 IMM(.D(IMM_ID), .Q(IMM_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
-Register_4 Rs(.D(Rs_ID), .Q(Rs_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rt(.D(Rt_ID), .Q(Rt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_4 Rd(.D(Rd_ID), .Q(Rd_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
+Register_4 Rs(.D(Rs_ID), .Q(Rs_EX), .clk(clk), .rst(!rst_n | Stall), .wrtEn(wrtEn_1));
+Register_4 Rt(.D(Rt_ID), .Q(Rt_EX), .clk(clk), .rst(!rst_n | Stall), .wrtEn(wrtEn_1));
+Register_4 Rd(.D(Rd_ID), .Q(Rd_EX), .clk(clk), .rst(!rst_n | Stall), .wrtEn(wrtEn_1));
 
 
 ////////////////////////////////////////////
@@ -358,15 +358,25 @@ assign IF_ID_opcode = ALUOp_ID;
 wire ID_EX_RT_NOIMMEDIATA;                          // Whether RT is actually needed
 wire ID_EX_RT_NOFORWARDING;                         // Whether RT can't be passed in later stage
 assign ID_EX_RS_USED =                              // Not Shift related or PC related instruction
-                ID_EX_opocode[3:2]!=2'b11 & !((ID_EX_opocode[3:2]==2'b01)&(ID_EX_opocode!=4'b0111));
+                OPCODE1[3:2]!=2'b11 & !((OPCODE1[3:2]==2'b01)&(OPCODE1!=4'b0111));
 assign ID_EX_RS_NOFORWARDING=
-                ID_EX_opocode!= 4'b1001;            // if we are storing here, no stall 
-                                                    // need since we can get the data by forwarding.
+                OPCODE1!= 4'b1001;            // if we are storing here, no stall 
+                  
+/*                                  // need since we can get the data by forwarding.
 assign Stall =  //(((ALUOp_ID == 4'b1100)|(ALUOp_ID == 4'b1101))&!IF_Flush)|// B or BR
                 ((EX_MEM_opocode == 4'b1000)         // the memstage is loading
                 &(((ID_EX_RT == EX_MEM_RD)|((ID_EX_RS_NOFORWARDING & ID_EX_RS_USED)&(ID_EX_RS == EX_MEM_RD)))
                                                      // the ex stage needs the loaded data
                 |((ALUOp_ID == 4'b1101)&(Rs_ID==EX_MEM_RD))));          // the ID stage needs the loaded data
                 // RT is actually used and no forwarding here.
+                */
+wire LtoU_NB, LtoU_B, LD;
+assign LtoU_NB = (Rt_ID == Rd_EX)|((ID_EX_RS_NOFORWARDING & ID_EX_RS_USED)&(Rs_ID == Rd_EX));
+assign LtoU_B = (OPCODE1 == 4'b1101)&(Rs_ID==Rd_EX);
+assign LD = (ID_EX_opocode == 4'b1000);
+
+assign Stall =  LD & (LtoU_NB | LtoU_B);          // the ID stage needs the loaded data
+                // RT is actually used and no forwarding here.
+                
 assign Branch_Hazard = Taken&Branch;
 endmodule
