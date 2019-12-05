@@ -10,7 +10,7 @@ wire      Stall;
 reg      CLK_RESET_DEBUG;
 wire [3:0] Clock_VALUE;
 Memory_Cache MC(.clk(clk),.rst_n(rst_n),.Write(Write),.Read(Read),.DataIn(DataIn),.CLK_RESET_DEBUG(CLK_RESET_DEBUG),
-.DataOut(DataOut),.Stall(Stall),.Addr(Addr),.OPOCODE(OPOCODE));//,Write,Read,DataIn,DataOut,Stall,Addr);
+.DataOut(DataOut),.Stall(Stall),.Addr(Addr));//,Write,Read,DataIn,DataOut,Stall,Addr);
 assign Clock_VALUE = MC.CLK_OUT;
 
 initial

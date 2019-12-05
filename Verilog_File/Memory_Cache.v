@@ -1,9 +1,8 @@
-module Memory_Cache(clk,rst_n,Write,Read,DataIn,DataOut,Stall,Addr,OPOCODE,CLK_RESET_DEBUG);
-input[3:0]  OPOCODE;
+module Memory_Cache(clk,rst_n,Write,Read,DataIn,DataOut,Stall,Addr,CLK_RESET_DEBUG);
 input       clk,rst_n;
 input       Write;
 input       Read;
-input       CLK_RESET_DEBUG;
+input       CLK_RESET_DEBUG;        // debug only, ignore pls.
 input[15:0] Addr;
 input[7:0]  DataIn;
 output[7:0] DataOut;
