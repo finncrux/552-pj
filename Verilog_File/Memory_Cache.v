@@ -57,8 +57,13 @@ memory4c Memory (.data_out(Memory_OUT), .data_in(Memory_IN), .addr(Memroy_ADDR),
 
 //////////////////////////////////////////
 // CLOCK
+// Expected Behaviour
+//
+// CLK_RESET    0   1   0   0   0   0   ...
+//              
+// CLK_OUT      x   0   1   2   3   4   ...
 //////////////////////////////////////////
-wire        CLK_RESET;
+wire       CLK_RESET;  // use this 
 wire [3:0] CLK_OUT;    // use this
 wire [3:0] CLK_RES;    // not this
 wire [3:0] CLK_A,CLK_B;
