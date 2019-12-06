@@ -82,11 +82,6 @@ Register_4 CLOCK_RES(.D(CLK_REG_IN), .Q(CLK_OUT), .clk(clk), .rst(!rst_n), .wrtE
 //////////////////////////////////////////
 
 
-localparam IDLE = 3'b000;
-localparam CHK  = 3'b001;
-localparam WAIT = 3'b010;
-localparam WRT  = 3'b011;
-localparam TAG  = 3'b100;
 
 // Next State Flop
 wire state, nxt_state;
@@ -101,16 +96,28 @@ always@(*) begin
         IDLE: begin //IDLE
 
         end
-        CHK:  begin
+        CHK_I:  begin
 
         end
-        WAIT: begin
+        WAIT_I: begin
 
         end
-        WRT:  begin
+        WRT_I:  begin
 
         end
-        TAG:  begin
+        TAG_I:  begin
+
+        end
+        CHK_D:  begin
+
+        end
+        WAIT_D: begin
+
+        end
+        WRT_D:  begin
+
+        end
+        TAG_D:  begin
 
         end
 
