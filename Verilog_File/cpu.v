@@ -4,11 +4,12 @@ module cpu(clk, rst_n, hlt, pc);
 input clk, rst_n;
 output hlt;
 output[15:0] pc;
-
+wire Stall_FSM;
 wire Stall;             //From Hazard Detection
 wire Flush;             //From Hazard Detection
 wire wrtEn_1;
-assign wrtEn_1 = 1;
+assign Stall_FSM = 0;
+assign wrtEn_1 = !Stall_FSM;//!stall;
 
 
 ////////////////////////////////////////////
@@ -40,14 +41,26 @@ assign Halt_IF = (&Instr_IF[15:12])&(!IF_Flush);
 assign PC_Reg_IN = Branch_Hazard ? PC_Branch : PC_2;
 
 //PC Reg
-pc_reg pcreg(.rst(!rst_n), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite & !Halt_IF));
+pc_reg pcreg(.rst(!rst_n), .clk(clk), .PC_in(PC_Reg_IN), .PC_out(PC_Reg_OUT), .PCWrite(PCWrite & !Halt_IF & wrtEn_1));
 
 //PC Add 2
 addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl(Ovfl));
 
+// Cache & Memory
+wire Memroy_Write;
+wire Memory_Read;
+wire [15:0] DataOut_I;
+wire [15:0] DataOut_D;
+wire [15:0] DataIn_D;
+wire [15:0] ADDR_I;
+wire [15:0] ADDR_D;
+wire        Data_WE;
+
+wire [15:0] Memory_Data_Out;
+
 //Instruction Memory
 memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg_OUT), 
-                            .enable(PC_Rd), .wr(PC_Wrt), .clk(clk), .rst(!rst_n));
+                            .enable(PC_Rd), .wr(PC_Wrt& wrtEn_1), .clk(clk), .rst(!rst_n));
 
 ////////////////////////////////////////////
 // IF/ID Reg /////////////////////////////// OK
@@ -61,9 +74,9 @@ wire IF_ID_Write;   //Set to 0 if stall
 
 assign IF_ID_Write = Stall ? 0 : 1;
 // Data Reg
-Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
-Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write));
-Register_16 PC_IN_IF(.D(PC_Reg_IN), .Q(PC_IN_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write));
+Register_16 PC(.D(PC_IF), .Q(PC_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write&wrtEn_1));
+Register_16 Instr(.D(Instr_IF), .Q(Instr_ID), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write&wrtEn_1));
+Register_16 PC_IN_IF(.D(PC_Reg_IN), .Q(PC_IN_ID), .clk(clk), .rst(!rst_n), .wrtEn(IF_ID_Write&wrtEn_1));
 
 
 ////////////////////////////////////////////
@@ -136,11 +149,11 @@ RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), 
 
 // I/O Test
 wire [15:0]  Instr_EX,PC_IN_EX;
-Register_16 Instr_id(.D(Instr_ID), .Q(Instr_EX), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write));
+Register_16 Instr_id(.D(Instr_ID), .Q(Instr_EX), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write&wrtEn_1));
 
 // I/O Control
 wire [3:0] ALUOp_EX;
-wire ALUSrc_EX, RegDst_EX;      //EX
+wire RegDst_EX;      //EX
 wire MemRead_EX, MemWrt_EX;     //M
 wire MemToReg_EX, RegWrt_EX;    //WB
 wire halt_EX;
@@ -149,10 +162,11 @@ wire [15:0] Rs_Data_EX, Rt_Data_EX, IMM_EX;
 wire [3:0] Rs_EX, Rt_EX, Rd_EX;
 
 // Control Reg EX
+
+
 Register_4 ALUOp(.D(ALUOp_ID), .Q(ALUOp_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 ALUSrc(.D(ALUSrc_ID), .Q(ALUSrc_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegDst(.D(RegDst_ID), .Q(RegDst_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 HALT_id(.D(halt_ID), .Q(halt_EX), .clk(clk), .rst(!rst_n), .wrtEn(!halt_EX));
+Register_1 HALT_id(.D(halt_ID), .Q(halt_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1&!halt_EX));
 
 // Control Reg M
 Register_1 MemRead_id(.D(MemRead_ID), .Q(MemRead_EX), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
@@ -216,11 +230,11 @@ assign F = {{!WriteEnableZ?Flag_REG_OUT[2]:FlagFromAlu[2]},{!WriteEnableV?Flag_R
 
 // I/O Test
 wire [15:0]  Instr_MEM,PC_IN_MEM;
-Register_16 Instr_ex(.D(Instr_EX), .Q(Instr_MEM), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write));
+Register_16 Instr_ex(.D(Instr_EX), .Q(Instr_MEM), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write&wrtEn_1));
 
 //I/O Expose Control
 wire [3:0] ALUOp_MEM;
-wire ALUSrc_MEM, RegDst_MEM;    //EX
+wire RegDst_MEM;    //EX
 wire MemRead_MEM, MemWrt_MEM;   //M
 wire MemToReg_MEM, RegWrt_MEM;  //WB
 wire halt_MEM;
@@ -230,7 +244,6 @@ wire [3:0] Rd_MEM, Rs_MEM;
 assign ExFWD_TEMP = MemAddr_MEM;
 // Control Reg EX
 Register_4 ALUOp_ex(.D(ALUOp_EX), .Q(ALUOp_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 ALUSrc_ex(.D(ALUSrc_EX), .Q(ALUSrc_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegDst_ex(.D(RegDst_EX), .Q(RegDst_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg M
@@ -240,7 +253,7 @@ Register_1 MemWrite_ex(.D(MemWrt_EX), .Q(MemWrt_MEM), .clk(clk), .rst(!rst_n), .
 // Control Reg WB
 Register_1 MemToReg_ex(.D(MemToReg_EX), .Q(MemToReg_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_ex(.D(RegWrt_EX), .Q(RegWrt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 HALT_ex(.D(halt_EX), .Q(halt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(!halt_MEM));
+Register_1 HALT_ex(.D(halt_EX), .Q(halt_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1&!halt_MEM));
 Register_16 PC_IN_M(.D(PC_IN_EX), .Q(PC_IN_MEM), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
@@ -277,12 +290,12 @@ memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(Me
 
 // I/O Test
 wire [15:0]  Instr_WB, MemWrt_Data_WB,PC_IN_WB;
-Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write));
+Register_16 Instr_mem(.D(Instr_MEM), .Q(Instr_WB), .clk(clk), .rst(!rst_n | IF_Flush), .wrtEn(IF_ID_Write&wrtEn_1));
 Register_16 MemWrt_Data_mem(.D(MemWrt_Data), .Q(MemWrt_Data_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 //I/O Expose Control
 wire [3:0] ALUOp_WB;
-wire ALUSrc_WB, RegDst_WB;    //EX
+wire RegDst_WB;    //EX
 wire MemRead_WB, MemWrt_WB;   //M
 wire MemToReg_WB;  //WB
 wire halt_WB;
@@ -291,7 +304,6 @@ wire [15:0] MemRead_Data_WB, MemAddr_WB;
 
 // Control Reg EX
 Register_4 ALUOp_mem(.D(ALUOp_MEM), .Q(ALUOp_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 ALUSrc_mem(.D(ALUSrc_MEM), .Q(ALUSrc_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegDst_mem(.D(RegDst_MEM), .Q(RegDst_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Control Reg M
@@ -301,7 +313,7 @@ Register_1 MemWrite_mem(.D(MemWrt_MEM), .Q(MemWrt_WB), .clk(clk), .rst(!rst_n), 
 // Control Reg WB
 Register_1 MemToReg_mem(.D(MemToReg_MEM), .Q(MemToReg_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 Register_1 RegWrt_mem(.D(RegWrt_MEM), .Q(RegWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
-Register_1 HALT_mem(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(!halt_WB));
+Register_1 HALT_mem(.D(halt_MEM), .Q(halt_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1&!halt_WB));
 Register_16 PC_IN_W(.D(PC_IN_MEM), .Q(PC_IN_WB), .clk(clk), .rst(!rst_n), .wrtEn(wrtEn_1));
 
 // Data Reg
