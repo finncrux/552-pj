@@ -1,6 +1,6 @@
 module Cache_Ctrl(DataIn_I, DataOut_I, DataArray_WE_I, MetaDataArray_WE_I, Miss_I, Addr_I, IF
                     DataIn_D, DataOut_D, DataArray_WE_D, MetaDataArray_WE_D, Miss_D, Addr_D, R, W, 
-                    DataIn_M, DataOut_M, DataVLD, Addr_M, WE_M, clk, rst)
+                    DataIn_M, DataOut_M, DataVLD, Addr_M, WE_M, clk, rst, Stall)
 
 //////////////////////////////////////////
 // Ports
@@ -28,8 +28,10 @@ output  [15:0]  Addr_M
 output          WE_M;
 
 input clk, rst;
+output Stall;
 
-
+reg             Stall_fsm;
+assign Stall =  Stall_fsm;
 //////////////////////////////////////////
 // Cntr
 //////////////////////////////////////////
@@ -37,13 +39,12 @@ input clk, rst;
 // External Wire
 
 // Internal Wire
-wire        ovfl22, s22, g22, p22;
 wire[3:0]   counter_block, counter_block1;
 
 Register_4 current_block(.Q(counter_block1), .D(counter_block), .clk(clk), .rst(!rst_n | block_clear), 
                             .wrtEn(1'b1));
 CLA_4bit blocks8(.A(block_clear? 4'b0000 : counter_block1), .B(4'b0000), .Cin(ready_block & (counter_block1 != 4'b0111)), 
-                    .S(counter_block), .G(g22), .P(p22), .Ovfl(ovfl22), .Cout(s11));
+                    .S(counter_block), .G( ), .P( ), .Ovfl( ), .Cout( ));
 
 
 
@@ -72,61 +73,48 @@ assign memory_address = address_store;
 //////////////////////////////////////////
 
 // Params
-localparam IDLE   = 3'b000;
-localparam WAIT_I = 3'b001;
-localparam TAG_I  = 3'b010;
-localparam WAIT_D = 3'b011;
-localparam TAG_D  = 3'b100;
+localparam IDLE   = 2'b00;
+localparam WAIT_I = 2'b01;
+localparam WAIT_D = 2'b10;
 
 // Next State Flop
-wire [2:0] state, nxt_state;
+wire [1:0] state, nxt_state;
 wire       nxt_state_ready_wire, nxt_state_ready_wire_2;
 //increment state 1 or 2
 reg        nxt_state_ready, nxt_state_ready_2;      //// =1 when is ready to go to next state
 // counter for states
 wire [3:0] increment_amount;
-assign     increment_amount = nxt_state_ready_2? 3'b0010 : nxt_state_ready? 4'b0001 : 4'b0000;
-addsub_4bit state_counter(.Sum(nxt_state), .Ovfl( ), .A(state), .B(increment_amount), .sub(1'b0));
+assign     increment_amount = nxt_state_ready_2? 4'b0010 : nxt_state_ready? 4'b0001 : 4'b0000;
+addsub_4bit state_counter(.Sum(nxt_state), .Ovfl( ), .A(state), .B(increment_amount), .sub( ));
 
 assign     nxt_state_ready_wire = nxt_state_ready;
-dff_3 FSM_state(.D(nxt_state), .Q(state), WE(1'b1), .clk(clk), .rst(!rst | (!R & !W & !IF)));
+dff_3 FSM_state(.D(nxt_state), .Q(state), WE(1'b1), .clk(clk), .rst(rst));
 
 // Next State Combination Logic
 always@(*) begin
     nxt_state_ready = 1'b0;
     nxt_state_ready_2  = 1'b0;
-    Stall = 1'b0;
+    Stall_fsm = 1'b0;
     block_clear = 1'b1;
     add_address_begin = 1'b0;
     add_address_ready = 1'b0;    
     
     case(state)
         IDLE: begin //IDLE
-            nxt_state_ready = IF ;
-            Stall = 1'b1;
+            nxt_state_ready = Miss_I;
+            nxt_state_ready_2 = Miss_D & !Miss_I;
+            Stall_fsm = Miss_I | Miss_D;
         end
-        CHK_I:  begin
 
-        end
         WAIT_I: begin
+            Stall_fsm = 1'b1;
+            nxt_state_ready = Miss_D & counter_block1 == 4'b0111;
 
         end
-        TAG_I:  begin
 
-        end
-        CHK_D:  begin
-
-        end
         WAIT_D: begin
-
+            Stall_fsm = 1'b1;
         end
-        WRT_D:  begin
-
-        end
-        TAG_D:  begin
-
-        end
-
     endcase
 
 end
