@@ -18,40 +18,24 @@ wire[15:0]  memory_address;
 wire[15:0]  memory_data;
 assign rst = !rst_n;
 
-////////////////////////////////////////
-// MetaDataArray and wires
-////////////////////////////////////////
-wire MetaDataArray_WR;          // write enable for metadata
-wire[7:0]   MetaDataArray_IN;   // write value to metadata
-wire[7:0]   MetadataArray_OUT;  // read avlue from metadata
-wire[127:0] MetaDataArray_EN;   // onehot, which block to be read or write
 
-MetaDataArray Metadata1(.clk(clk), .rst(rst_n), .DataIn(MetaDataArray_IN), .Write(MetaDataArray_WR),
- .BlockEnable(MetaDataArray_EN), .DataOut(MetadataArray_OUT));
+//////////////////////////////////////////
+// address computation
+//////////////////////////////////////////
+wire [15:0]     start_addr; 
+//////////base address
+wire [15:0]     address_in, address_out, address_store;
+//////////address need to be stored, new computed address, address currently stored
+wire            ovfl;
+reg             add_address_begin, add_address_ready;
+//////////signal from FSM:ready to start adding address, ready to next address
 
-////////////////////////////////////////
-// DataArray and wires
-////////////////////////////////////////
-wire        DataArray_WR;      // enable for w
-wire[15:0]  DataArray_IN;      // data input
-wire[15:0]  DataArray_OUT;     // data read out
-wire[127:0] DataArray_EN;      // enable for r/w. one hot
-wire[7:0]   DataArray_ADDR;    // 128 block address available in total
-DataArray Data(.clk(clk), .rst(rst_n), .DataIn(DataArray_IN), 
-.Write(DataArray_WR), .BlockEnable(DataArray_EN), .WordEnable(DataArray_ADDR), .DataOut(DataArray_OUT));
-
-/////////////////////////////////////////
-// Multicycle Memroy
-/////////////////////////////////////////
-wire        Memory_WR;
-wire        Memory_EN;
-wire        Memroy_VLD;
-wire[15:0]  Memory_IN;
-wire[15:0]  Memory_OUT;
-wire[15:0]  Memroy_ADDR;
-
-memory4c Memory (.data_out(Memory_OUT), .data_in(Memory_IN), .addr(Memroy_ADDR), 
-.enable(Memory_EN), .wr(Memory_WR), .clk(clk), .rst(rst_n), .data_valid(Memroy_VLD));
+assign start_addr = {miss_address[15:4],{4{1'b0}}};
+assign address_in = add_address_begin? 
+                    start_addr : add_address_ready? address_out : address_store;
+addsub_16bit adder(.A(address_store), .B(16'h2), .sub(1'b0), .Sum(address_out), .Ovfl(ovfl));
+Register_16 storeAddr(.Q(address_store), .D(address_in), .clk(clk), .rst(!rst_n), .wrtEn((counter_block1 !== 4'b0111)));
+assign memory_address = address_store;
 
 //////////////////////////////////////////
 // CLOCK
@@ -80,36 +64,43 @@ Register_4 CLOCK_RES(.D(CLK_REG_IN), .Q(CLK_OUT), .clk(clk), .rst(!rst_n), .wrtE
 // FSM
 //////////////////////////////////////////
 
-
-localparam IDLE = 3'b000;
-localparam CHK  = 3'b001;
-localparam WAIT = 3'b010;
-localparam WRT  = 3'b011;
-localparam TAG  = 3'b100;
+// counter for states
+addsub_4bit state_counter(.Sum(nxt_state), .Ovfl( ), .A(state), .B({{3{1'b0}},nxt_state_ready_wire}), .sub(1'b0));
 
 // Next State Flop
-wire state, nxt_state;
-reg nxt_state_reg;
-assign nxt_state = nxt_state_reg;
-dff_3 FSM_state(.D(), .Q, WE, clk, rst);
+wire [2:0] state, nxt_state;
+wire       nxt_state_ready_wire;
+reg        nxt_state_ready;      //// =1 when is ready to go to next state
+assign     nxt_state_ready_wire = nxt_state_ready;
+dff_3 FSM_state(.D(nxt_state), .Q(state), WE(1'b1), .clk(clk), .rst(!rst | (!R & !W & !IF)));
 
 // Next State Combination Logic
 always@(*) begin
     
     case(state)
         IDLE: begin //IDLE
+            nxt_state_ready = W | R | IF;
+            Stall = 1'b1;
+        end
+        CHK_I:  begin
 
         end
-        CHK:  begin
+        WAIT_I: begin
 
         end
-        WAIT: begin
+        TAG_I:  begin
 
         end
-        WRT:  begin
+        CHK_D:  begin
 
         end
-        TAG:  begin
+        WAIT_D: begin
+
+        end
+        WRT_D:  begin
+
+        end
+        TAG_D:  begin
 
         end
 
