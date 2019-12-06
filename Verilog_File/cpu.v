@@ -263,6 +263,7 @@ assign MemWrt_Data = MemFWD ? RegWrt_Data_WB : MemWrt_Data_MEM;
 
 // Data Memory
 assign Stall_FSM = 0;
+wire[1:0] W_R;
 
 memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(MemAddr_MEM), 
                         .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
