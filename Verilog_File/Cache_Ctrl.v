@@ -1,6 +1,6 @@
 module Cache_Ctrl(DataIn_I, DataOut_I, DataArray_WE_I, MetaDataArray_WE_I, Miss_I, Addr_I, IF
                     DataIn_D, DataOut_D, DataArray_WE_D, MetaDataArray_WE_D, Miss_D, Addr_D, R, W, 
-                    DataIn_M, DataOut_M, DataVLD, Addr_M, WE_M, clk, rst, Stall)
+                    DataIn_M, DataOut_M, DataVLD, Addr_M, WE_M, EN_M, clk, rst, Stall)
 
 //////////////////////////////////////////
 // Ports
@@ -26,6 +26,7 @@ input           DataVLD;
 output  [15:0]  DataOut_M;
 output  [15:0]  Addr_M
 output          WE_M;
+output          EN_M;
 
 input clk, rst;
 output Stall;
@@ -37,24 +38,24 @@ assign Stall =  Stall_fsm;
 //////////////////////////////////////////
 
 // External Wire
+wire cntr_full, cntr_rst, cntr_stop;
 
 // Internal Wire
-wire[3:0]   counter_block, counter_block1;
+wire[3:0]   cnt, cnt_after;
+assign cntr_full = cnt_after == 4'b0111;
 
-Register_4 current_block(.Q(counter_block1), .D(counter_block), .clk(clk), .rst(!rst_n | block_clear), 
-                            .wrtEn(1'b1));
-CLA_4bit blocks8(.A(block_clear? 4'b0000 : counter_block1), .B(4'b0000), .Cin(ready_block & (counter_block1 != 4'b0111)), 
-                    .S(counter_block), .G( ), .P( ), .Ovfl( ), .Cout( ));
-
+Register_4 current_block(.Q(cnt), .D(cnt_after), .clk(clk), .rst(!rst_n | cntr_rst), .wrtEn(1'b1));
+CLA_4bit blocks8(.A(cntr_rst? 4'b0000 : cnt), .B(!cntr_stop & !cntr_full), 
+                    .Cin(4'b0000), .S(cnt_after), .G( ), .P( ), .Ovfl( ), .Cout( ));
 
 
 //////////////////////////////////////////
 // address computation
 //////////////////////////////////////////
 wire [15:0]     start_addr; 
-//////////base address
+//base address
 wire [15:0]     address_in, address_out, address_store;
-//////////address need to be stored; new computed address; address currently stored
+//address need to be stored; new computed address; address currently stored
 wire            ovfl;
 reg             add_address_begin, add_address_ready;
 //////////signal from FSM:ready to start adding address; ready to next address
