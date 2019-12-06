@@ -1,8 +1,8 @@
-module Memory_Cache(clk,rst_n,I_addr, I_Data_out, opcode, D_Data_in, Data_addr, D_Data_out);
+module Memory_Cache(clk,rst_n,I_addr, I_Data_out, opcode, D_Data_in, Data_addr, D_Data_out, Stall);
 input       clk,rst_n;
 input       Write;
 input       Read;
-input[15:0] Addr;
+input[15:0] I_Addr, Data_addr;
 input[7:0]  DataIn;
 output[7:0] DataOut;
 output      Stall;
