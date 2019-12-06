@@ -262,16 +262,19 @@ wire MemFWD;
 assign MemWrt_Data = MemFWD ? RegWrt_Data_WB : MemWrt_Data_MEM;
 
 // Data Memory
-assign Stall_FSM = 0;
-wire[1:0] W_R;
+Memory_Cache MEM_CACHE(.clk(clk),.rst_n(rst_n),
+.I_addr(PC_Reg_OUT), .I_Data_out(Instr_IF), .opcode(ALUOp_MEM), 
+.D_Data_in(MemWrt_Data), .Data_addr(MemAddr_MEM), .D_Data_out(MemRead_Data_MEM), 
+.Stall(Stall_FSM));
 
+/*
 memory_D DataMemory(.data_out(MemRead_Data_MEM), .data_in(MemWrt_Data), .addr(MemAddr_MEM), 
                         .enable(MemRead_MEM), .wr(MemWrt_MEM), .clk(clk), .rst(!rst_n));
 
 memory_I InstructionMem (.data_out(Instr_IF), .data_in(PC_Reg_OUT), .addr(PC_Reg_OUT), 
                             .enable(PC_Rd), .wr(PC_Wrt& NotCacheStall), .clk(clk), .rst(!rst_n));
 
-
+*/
 
 
 
