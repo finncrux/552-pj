@@ -81,29 +81,41 @@ Register_4 CLOCK_RES(.D(CLK_REG_IN), .Q(CLK_OUT), .clk(clk), .rst(!rst_n), .wrtE
 // FSM
 //////////////////////////////////////////
 
-// step 0: if is doing load/store operation, go to step 1.
 
-// step 1: start stalling. Use 2 cycles, check 2 metadata block and determine 
-// if the cache hit, go to step 3, 
-// if the cache miss, determine which metadata block should be replaced or filled. 
-// setting up the destination of memory reading.
-// goto step 2.
+localparam IDLE = 3'b000;
+localparam CHK  = 3'b001;
+localparam WAIT = 3'b010;
+localparam WRT  = 3'b011;
+localparam TAG  = 3'b100;
 
-// step 2: Start issueing reading for 8 cycles(0 - 7). 
+// Next State Flop
+wire state, nxt_state;
+reg nxt_state_reg;
+assign nxt_state = nxt_state_reg;
+dff_3 FSM_state(.D(), .Q, WE, clk, rst);
 
-//         Getting data back for 8 cycles (4 - 11).
-//         Writing to the dataArray for 8 cycles (4 - 11).
-//         Update the vld bit and TAG value for the newly read block. (0).
-// goto step 3.
+// Next State Combination Logic
+always@(*) begin
+    
+    case(state)
+        IDLE: begin //IDLE
 
-// step 3: 
-//         Update two metadata blocks LRU bit.(0 - 1).
-//         If read, get the data(2 Byte) from DataArray. (0).
-//         If write, write the data(2 Byte) to the DataArray.   (0).
-//         If write, write the data(2 Byte) to the main memory. (0 - 1).
-// goto step final
+        end
+        CHK:  begin
 
-// step final: un-stalling.
+        end
+        WAIT: begin
 
+        end
+        WRT:  begin
+
+        end
+        TAG:  begin
+
+        end
+
+    endcase
+
+end
 
 endmodule
