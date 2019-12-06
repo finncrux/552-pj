@@ -1,10 +1,7 @@
 module Memory_Cache(clk,rst_n,I_addr, I_Data_out, opcode, D_Data_in, Data_addr, D_Data_out, Stall);
 input           clk,rst_n;
-input           Write;
-input           Read;
 input [3:0]     opcode;
 input [15:0]    I_addr, Data_addr, D_Data_in;
-input [7:0]     DataIn;
 output[15:0]    I_Data_out, D_Data_out;
 output          Stall;
 
@@ -26,6 +23,6 @@ memory4c Memory   (.data_out(Data_out_mem), .data_in(D_Data_in), .addr((W&IDLE_F
 
 Cache_Ctrl Control(.DataOut_I(I_data_in_FSM), .DataArray_WE_I(I_d_en_FSM), .MetaDataArray_WE_I(I_md_en_FSM), .Miss_I(I_miss), .Addr_I(I_addr), 
                 .Addr_Miss_I(I_addr_FSM), .DataOut_D(D_data_in_FSM), .DataArray_WE_D(D_d_en_FSM), .MetaDataArray_WE_D(D_md_en_FSM), .Miss_D(D_miss), .Addr_D(Data_addr), 
-                .Addr_Miss_D(D_addr_FSM), .DataVLD(data_valid_m), .Addr_M(Addr_mem_FSM),.IDLE_FSM(IDLE_FSM), .EN(enable_mem_FSM), .clk(clk), .rst(rst), .Stall(Stall));
+                .Addr_Miss_D(D_addr_FSM), .DataVLD(data_valid_m), .Addr_M(Addr_mem_FSM),.IDLE_FSM(IDLE_FSM), .EN_M(enable_mem_FSM), .clk(clk), .rst(rst), .Stall(Stall));
 
 endmodule
