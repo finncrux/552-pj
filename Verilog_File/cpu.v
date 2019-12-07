@@ -118,8 +118,9 @@ decoder decoder(.instruction(Instr_ID), .opcode(OPCODE1), .rs(Rs_ID), .rt(Rt_ID)
                 .writer_en(writeReg1_en_ID), .halt(halt_ID));
 
 // register file
+wire RegWrt = RegWrt_WB&NotCacheStall;      // the RegWrt signal
 RegisterFile regfile(.clk(clk), .rst(!rst_n), .SrcReg1(Rs_ID), .SrcReg2(Rt_ID), .DstReg(Rd_WB), 
-                        .WriteReg(RegWrt_WB&NotCacheStall), .DstData(RegWrt_Data_WB), 
+                        .WriteReg(RegWrt), .DstData(RegWrt_Data_WB), 
                         .SrcData1(Rs_Data_ID), .SrcData2(Rt_Data_ID));
 
 

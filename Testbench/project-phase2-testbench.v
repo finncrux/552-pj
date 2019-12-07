@@ -141,7 +141,7 @@ module cpu_ptb();
    assign Inst = DUT.Instr_WB;
    //Instruction fetched in the current cycle
    
-   assign RegWrite = DUT.RegWrt_WB;
+   assign RegWrite = DUT.RegWrt;
    // Is register file being written to in this cycle, one bit signal (1 means yes, 0 means no)
   
    assign WriteRegister = DUT.Rd_WB;

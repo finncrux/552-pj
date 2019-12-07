@@ -44,14 +44,13 @@ reg addr_inc, addr_rst,addr_I_rst,addr_D_rst;
 //External Signal
 reg Data_WE, MetaData_WE;
 // Internal Wire
-wire [15:0] addr_after, addr_after2,addr_after3,addr_after4,addr, Addr_C;
-wire[15:0] ovfl1,ovfl2;
+wire [15:0] addr_after, addr, Addr_C;
 wire[15:0] addr_base_I,addr_base_D;
-assign addr_base_I = {{Addr_I[15:4]},{3'h0}};
-assign addr_base_D = {{Addr_D[15:4]},{3'h0}};
+assign addr_base_I = {{Addr_I[15:4]},{4'h0}};
+assign addr_base_D = {{Addr_D[15:4]},{4'h0}};
 
 wire [15:0] addr_out;
-assign addr_after = (addr_D_rst|addr_I_rst) ? (addr_I_rst? addr_base_I : addr_base_D) :addr_out;
+assign addr_after = (addr_D_rst|addr_I_rst) ? (addr_I_rst? addr_base_I : addr_base_D) : addr_out;
 addsub_16bit Addr_adder_M(.A(addr), .B(16'h2), .sub(1'b0), .Sum(addr_out), .Ovfl( ));
 addsub_16bit Addr_adder_C(.A(addr), .B(16'h8), .sub(1'b1), .Sum(Addr_C), .Ovfl( ));
 Register_16 Addr_reg1(.Q(addr), .D(addr_after), .clk(clk), .rst(!rst_n), .wrtEn(addr_inc));
@@ -114,8 +113,10 @@ always@(*) begin
                         (!Miss_I&Miss_D) ? WAIT_D : IDLE;
             Stall = Miss_I | Miss_D | stall_cache;
             cntr_rst = 1;
-            addr_rst = 1;
-            addr_I_rst = 1;
+            //addr_rst = 1;
+            addr_I_rst = !(!Miss_I&Miss_D);
+            addr_D_rst = 1;
+            addr_inc = Miss_I | Miss_D;
             //EN_M = Miss_I | Miss_D;
         end
 
@@ -126,7 +127,7 @@ always@(*) begin
             EN_M = (Miss_D&cntr_full) ? 1 : !cntr_half;
             cntr_rst = (Miss_D&cntr_full);
             addr_D_rst = (Miss_D&cntr_full);
-            addr_rst = (Miss_D&cntr_full);
+            //addr_rst = (Miss_D&cntr_full);
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
             Data_WE = DataVLD;
