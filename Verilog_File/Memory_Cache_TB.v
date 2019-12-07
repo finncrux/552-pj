@@ -1,27 +1,29 @@
 module Memory_Cache_TB();
-reg       clk,rst_n;
-reg       Write;
-reg       Read;
-reg [3:0] OPOCODE;
-reg[15:0] Addr;
-reg[7:0]  DataIn;
-wire[7:0] DataOut;
-wire      Stall;
-reg      CLK_RESET_DEBUG;
-wire [3:0] Clock_VALUE;
-Memory_Cache MC(.clk(clk),.rst_n(rst_n),.Write(Write),.Read(Read),.DataIn(DataIn),.CLK_RESET_DEBUG(CLK_RESET_DEBUG),
-.DataOut(DataOut),.Stall(Stall),.Addr(Addr));//,Write,Read,DataIn,DataOut,Stall,Addr);
-assign Clock_VALUE = MC.CLK_OUT;
+input           clk,rst_n;
+input [3:0]     opcode;
+input [15:0]    I_addr, Data_addr, D_Data_in;
+output[15:0]    I_Data_out, D_Data_out;
+output          Stall;
 
-initial
-begin
+wire        rst, W, R;
+
+
+Memory_Cache MC(.clk(clk), .rst_n(rst_n), .I_addr(I_addr), .I_Data_out(I_Data_out), .opcode(opcode), 
+                .D_Data_in(D_Data_in), .Data_addr(Data_addr), .D_Data_out(D_Data_out), .Stall(Stall));
+
+
+initial begin
     #1 clk = 0;
     #1 rst_n = 0;
     #3 rst_n = 1;
-    #2 CLK_RESET_DEBUG = 1'b1;
-    #2 CLK_RESET_DEBUG = 1'b0;
-    #16 CLK_RESET_DEBUG = 1'b1;
-    #2 CLK_RESET_DEBUG = 1'b0;
+
+
+    #2 opcode = 4'b1001;
+    I_addr = 16'h0000;
+    Data_addr = 16'h0001;
+
+
+    #20 I_addr = 16'h0001;
 
 
 end
