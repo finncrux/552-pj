@@ -18,8 +18,6 @@ output Miss;                    // Miss signal sent to FSM
 wire rst;                       
 wire Left_D_WE;                 
 wire Right_D_WE;
-wire Left_M_WE;
-wire Right_M_WE;
 assign rst = !rst_n;
 
 wire Left_M_WE_OUT;
@@ -72,8 +70,8 @@ shifter_6 shifter_s(.shift_out(BLOCK_EN_STALLED), .shift_val(SET_STALLED)); // f
 shifter_6 shifter_2(.shift_out(WORD_SEL), .shift_val({{3'b0},{OFFSET}}));         // findout the word 
 shifter_6 shifter_3(.shift_out(WORD_SEL_FSM), .shift_val({{3'b0},{OFFSET_FSM}})); // findout the word 
 
-assign Right_M_BE = Right_M_WE?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
-assign Left_M_BE  = Left_M_WE ?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
+assign Right_M_BE = Right_M_WE_OUT?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
+assign Left_M_BE  = Left_M_WE_OUT ?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
 assign Right_D_BE = BLOCK_EN;           // if write to metadata, need update both!
 assign Left_D_BE  = BLOCK_EN;           // if write to metadata, need update both!
 // Metadata wires
@@ -104,7 +102,7 @@ wire Hit_Left;
 wire Hit_Right; 
 assign Hit_Left  = Left_M_WE_OUT?  1'b0:((TAG == Left_TAG_RD )&(Left_VLD));
 assign Hit_Right = Right_M_WE_OUT? 1'b0:((TAG == Right_TAG_RD)&(Right_VLD));
-assign Miss = (R)&(!(Hit_Left|Hit_Right));        // miss if:
+assign Miss = (!(Hit_Left|Hit_Right));        // miss if:
                                                     // there is an read/write operation and
                                                     // not found in cache.
 wire   Hit;

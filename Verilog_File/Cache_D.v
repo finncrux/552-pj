@@ -74,8 +74,8 @@ shifter_6 shifter_s(.shift_out(BLOCK_EN_STALLED), .shift_val(SET_STALLED)); // f
 shifter_6 shifter_2(.shift_out(WORD_SEL), .shift_val({{3'b0},{OFFSET}}));         // findout the word 
 shifter_6 shifter_3(.shift_out(WORD_SEL_FSM), .shift_val({{3'b0},{OFFSET_FSM}})); // findout the word 
 
-assign Right_M_BE = Right_M_WE?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
-assign Left_M_BE  = Left_M_WE ?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
+assign Right_M_BE = Right_M_WE_OUT?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
+assign Left_M_BE  = Left_M_WE_OUT ?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
 assign Right_D_BE = BLOCK_EN;           // if write to metadata, need update both!
 assign Left_D_BE  = BLOCK_EN;           // if write to metadata, need update both!
 // Metadata wires
