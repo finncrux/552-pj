@@ -119,8 +119,12 @@ assign Left_D_IN    = Hit_Left ? DataIn_CPU:DataIn_FSM;             // get the d
 assign Right_D_IN   = Hit_Right? DataIn_CPU:DataIn_FSM;             // get the data to write from cpu on hit.
 assign Left_D_WORD  = Hit_Left?  WORD_SEL[7:0]:WORD_SEL_FSM[7:0];   // decide which word write into.
 assign Right_D_WORD = Hit_Right? WORD_SEL[7:0]:WORD_SEL_FSM[7:0];   // if hit, use cpu offset. else, use fsm offset.
-assign Left_D_WE    = (Data_WE|(Hit_Left  & W))? GoLeft:1'b0;       // write to the cache when:
-assign Right_D_WE   = (Data_WE|(Hit_Right & W))?!GoLeft:1'b0;       // Cache write hit, or fsm require write
+wire replace_left;
+wire replace_right;
+assign replace_left  =Data_WE&GoLeft;
+assign replace_right =Data_WE&(!GoLeft);
+assign Left_D_WE    = ((Hit_Left  & W)|replace_left);       // write to the cache when:
+assign Right_D_WE   = ((Hit_Right  & W)|replace_right);       // Cache write hit, or fsm require write
 
 // Metadata write logic
 assign Left_M_WE_IN    = (Left_M_IN  ==  Left_M_OUT)?1'b0:MetaData_WE|Hit;                              // always update both metadata if needed
