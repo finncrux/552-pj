@@ -16,8 +16,7 @@ input Data_WE;                  // Data write enable from FSM
 output [15:0] DataOut_CPU;      // Dataoutput that CPU can see
 output Miss;                    // Miss signal sent to FSM
 
-assign stall_D = Left_M_WE|Left_D_WE|Right_W_WE|Right_D_WE;
-/// internal wires
+/// internal wires                                                  // need to update metadata, schedule the write.
 wire rst;                       
 wire Left_D_WE;                 
 wire Right_D_WE;
@@ -50,7 +49,7 @@ wire[7:0]  Left_M_OUT;
 wire[7:0]  Left_M_REG_OUT;
 wire[127:0]Left_M_BE;
 MetaDataArray  Left_M (.clk(clk), .rst(rst), .DataIn(Left_M_REG_OUT),  .Write(Left_M_WE_OUT), 
-.BlockEnable(Left_M_BE), .DataOut(Left_M_OUT_RES));
+.BlockEnable(Left_M_BE), .DataOut(Left_M_OUT));
 
 // right metadata
 wire[7:0]  Right_M_IN;
@@ -62,18 +61,21 @@ MetaDataArray  Light_M(.clk(clk), .rst(rst), .DataIn(Right_M_REG_OUT), .Write(Ri
 
 // Miss Detection wires
 wire[5:0]   SET = Addr_CPU[9:4];        // find out which set the data could be in.
+wire[5:0]   SET_STALLED;                // stalled set
 wire[5:0]   TAG = Addr_CPU[15:10];      // find out the CORRECT tag from CPU
 wire[2:0]   OFFSET = Addr_CPU[3:1];     // find out of the word (which byte) 
 wire[2:0]   OFFSET_FSM = Addr_FSM[3:1]; // find out of the word (which byte) 
 wire[127:0] BLOCK_EN;                   // convert the set to one hot
+wire[127:0] BLOCK_EN_STALLED;           // stall from last cycle
 wire[127:0] WORD_SEL;                   // convert the offset to one hot
 wire[127:0] WORD_SEL_FSM;               // convert the offset to one hot
 shifter_6 shifter_1(.shift_out(BLOCK_EN), .shift_val(SET));                       // findout the block 
+shifter_6 shifter_s(.shift_out(BLOCK_EN_STALLED), .shift_val(SET_STALLED)); // findout the block 
 shifter_6 shifter_2(.shift_out(WORD_SEL), .shift_val({{3'b0},{OFFSET}}));         // findout the word 
 shifter_6 shifter_3(.shift_out(WORD_SEL_FSM), .shift_val({{3'b0},{OFFSET_FSM}})); // findout the word 
 
-assign Right_M_BE = BLOCK_EN;           // if write to metadata, need update both!
-assign Left_M_BE  = BLOCK_EN;           // if write to metadata, need update both!
+assign Right_M_BE = Right_M_WE?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
+assign Left_M_BE  = Left_M_WE ?BLOCK_EN_STALLED:BLOCK_EN;   // if write to metadata, need update both!
 assign Right_D_BE = BLOCK_EN;           // if write to metadata, need update both!
 assign Left_D_BE  = BLOCK_EN;           // if write to metadata, need update both!
 // Metadata wires
@@ -121,8 +123,8 @@ assign Left_D_WE    = (Data_WE|(Hit_Left  & W))? GoLeft:1'b0;       // write to 
 assign Right_D_WE   = (Data_WE|(Hit_Right & W))?!GoLeft:1'b0;       // Cache write hit, or fsm require write
 
 // Metadata write logic
-assign Left_M_WE_IN    = MetaData_WE|Hit;                              // always update both metadata if needed
-assign Right_M_WE_IN   = MetaData_WE|Hit;                              // update if FSM ask so or on cache hit.
+assign Left_M_WE_IN    = (Left_M_IN  ==  Left_M_OUT)?1'b0:MetaData_WE|Hit;                              // always update both metadata if needed
+assign Right_M_WE_IN   = (Right_M_IN == Right_M_OUT)?1'b0:MetaData_WE|Hit;                              // update if FSM ask so or on cache hit.
 assign Left_M_IN    = Hit_Left? {{2'h3},{TAG[5:0]}}:                // hit left? update the VLD and LRU!
                       (GoLeft&!Hit_Right)?   {{2'h3},{TAG[5:0]}}:   // miss but replace left? update TAG,VLD and LRU!;
                       {{1'b0},{Left_M_OUT[6:0]}};                   // miss but replace the right, or hit right? change LRU to 0!;
@@ -131,12 +133,15 @@ assign Right_M_IN   = Hit_Right? {{2'h3},{TAG[5:0]}}:               // hit right
                       {{1'b0},{Left_M_OUT[6:0]}};                   // miss but replace the left, or hit left? change LRU to 0!;
 
 // Metadata write logic
-Register_1 Left_ME_REG(.Q(Left_M_WE_OUT), .D(Left_M_WE_IN), .clk(clk), .rst(rst), .wrtEn(1'b1));
-Register_1 Right_ME_REG(.Q(Right_M_WE_OUT), .D(Right_M_WE_IN), .clk(clk), .rst(rst), .wrtEn(1'b1));
+Register_1 Left_ME_REG(.Q(Left_M_WE_OUT), .D(stall_D?1'b0:Left_M_WE_IN), .clk(clk), .rst(rst), .wrtEn(1'b1));
+Register_1 Right_ME_REG(.Q(Right_M_WE_OUT), .D(stall_D?1'b0:Right_M_WE_IN), .clk(clk), .rst(rst), .wrtEn(1'b1));
 Register_16 META_REG(.Q({{Left_M_REG_OUT},{Right_M_REG_OUT}}), .D({{Left_M_IN},{Right_M_IN}}), .clk(clk), 
+.rst(rst), .wrtEn(1'b1));
+Register_16 META_BE_REG(.Q({{10'h0},{SET_STALLED}}), .D({{10'h0},{SET}}), .clk(clk), 
 .rst(rst), .wrtEn(1'b1));
 
 
+assign stall_D = (Left_M_WE&Hit_Left)|(Right_M_WE&Hit_Right);       // if one side both hit and
 
 assign DataOut_CPU = Hit_Left?Left_D_OUT:
                      Hit_Right?Right_D_OUT:

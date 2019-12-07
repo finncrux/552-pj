@@ -20,7 +20,8 @@ Cache_D DATA_cache(.clk(clk), .rst_n(rst_n), .DataIn_FSM(D_data_in_FSM), .DataIn
                     .stall_D(stall_D));
 
 Cache_I Inst_cache(.clk(clk), .rst_n(rst_n), .DataIn_FSM(I_data_in_FSM), .DataOut_CPU(I_Data_out), .Miss(I_miss), .Addr_CPU(I_addr),
-                    .Addr_FSM(I_addr_FSM), .MetaData_WE(I_md_en_FSM), .Data_WE(I_d_en_FSM), .R(1'b1),.stall_I(stall_I));
+                    .Addr_FSM(I_addr_FSM), .MetaData_WE(I_md_en_FSM), .Data_WE(I_d_en_FSM),.stall_I(stall_I));
+
 
 memory4c Memory   (.data_out(Data_out_mem), .data_in(D_Data_in), .addr((W&IDLE_FSM)?Data_addr:Addr_mem_FSM), .enable(enable_mem_FSM | (W&IDLE_FSM)), .wr(IDLE_FSM & W), .clk(clk), .rst(rst), .data_valid(data_valid_m));
 

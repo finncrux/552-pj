@@ -1,8 +1,8 @@
 //untested
 module Register_4(Q, D, clk, rst, wrtEn);
 
-input[3:0] Q;
-output[3:0] D;
+input[3:0] D;
+output[3:0] Q;
 input clk, rst, wrtEn;
 
 dff DFF0(.q(Q[0]), .d(D[0]), .wen(wrtEn), .clk(clk), .rst(rst));
