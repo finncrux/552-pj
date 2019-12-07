@@ -129,6 +129,7 @@ always@(*) begin
 
         WAIT_WB : begin
             nxt_state = IDLE;
+            Stall = 1'b1;
         end
     endcase
 

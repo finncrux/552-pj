@@ -130,7 +130,7 @@ assign Left_M_IN    = Hit_Left? {{2'h3},{TAG[5:0]}}:                // hit left?
                       {{1'b0},{Left_M_OUT[6:0]}};                   // miss but replace the right, or hit right? change LRU to 0!;
 assign Right_M_IN   = Hit_Right? {{2'h3},{TAG[5:0]}}:               // hit right? update the VLD and LRU!
                       (!GoLeft&!Hit_Left)?   {{2'h3},{TAG[5:0]}}:   // miss but replace right? update TAG,VLD and LRU!;
-                      {{1'b0},{Left_M_OUT[6:0]}};                   // miss but replace the left, or hit left? change LRU to 0!;
+                      {{1'b0},{Right_M_OUT[6:0]}};                   // miss but replace the left, or hit left? change LRU to 0!;
 
 // Metadata write logic
 wire temp0;
@@ -147,7 +147,7 @@ Register_16 META_BE_REG(.Q({{10'h0},{SET_STALLED}}), .D(temp2), .clk(clk),
 .rst(rst), .wrtEn(1'b1));
 
 
-assign stall_D = (Left_M_WE&Hit_Left)|(Right_M_WE&Hit_Right);       // if one side both hit and
+assign stall_D = (Left_M_WE_IN&Hit_Left)|(Right_M_WE_IN&Hit_Right);       // if one side both hit and
 
 assign DataOut_CPU = Hit_Left?Left_D_OUT:
                      Hit_Right?Right_D_OUT:
