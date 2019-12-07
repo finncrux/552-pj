@@ -40,18 +40,27 @@ reg  [1:0] nxt_state;
 
 //ADDR_M
 // External Wire
-reg addr_inc;
+reg addr_inc, addr_rst,addr_I_rst,addr_D_rst;
 //External Signal
 reg Data_WE, MetaData_WE;
 // Internal Wire
 wire [15:0] addr_after, addr_after2,addr_after3,addr_after4,addr, Addr_C;
-wire ovfl1,ovfl2;
-addsub_16bit Addr_adder_M(.A(addr), .B(16'h2), .sub(1'b0), .Sum(addr_after), .Ovfl(ovfl1 ));
+wire[15:0] ovfl1,ovfl2;
+wire[15:0] addr_base_I,addr_base_D;
+assign addr_base_I = {{Addr_I[15:4]},{3'h0}};
+assign addr_base_D = {{Addr_D[15:4]},{3'h0}};
+
+wire [15:0] addr_out;
+assign addr_after = (addr_D_rst|addr_I_rst) ? (addr_I_rst? addr_base_I : addr_base_D) :addr_out;
+addsub_16bit Addr_adder_M(.A(addr), .B(16'h2), .sub(1'b0), .Sum(addr_out), .Ovfl( ));
+addsub_16bit Addr_adder_C(.A(addr), .B(16'h8), .sub(1'b1), .Sum(Addr_C), .Ovfl( ));
 Register_16 Addr_reg1(.Q(addr), .D(addr_after), .clk(clk), .rst(!rst_n), .wrtEn(addr_inc));
-Register_16 Addr_reg2(.Q(addr_after2), .D(addr), .clk(clk), .rst(!rst_n), .wrtEn(addr_inc));
-Register_16 Addr_reg3(.Q(addr_after3), .D(addr_after2), .clk(clk), .rst(!rst_n), .wrtEn(addr_inc));
-Register_16 Addr_reg4(.Q(addr_after4), .D(addr_after3), .clk(clk), .rst(!rst_n), .wrtEn(addr_inc));
-Register_16 Addr_reg5(.Q(Addr_C), .D(addr_after4), .clk(clk), .rst(!rst_n), .wrtEn(addr_inc));
+
+/*
+Register_16 Addr_reg2(.Q(addr_after2), .D(addr), .clk(clk), .rst(!rst_n|addr_rst), .wrtEn(addr_inc));
+Register_16 Addr_reg3(.Q(addr_after3), .D(addr_after2), .clk(clk), .rst(!rst_n|addr_rst), .wrtEn(addr_inc));
+Register_16 Addr_reg4(.Q(addr_after4), .D(addr_after3), .clk(clk), .rst(!rst_n|addr_rst), .wrtEn(addr_inc));
+Register_16 Addr_reg5(.Q(Addr_C), .D(addr_after4), .clk(clk), .rst(!rst_n|addr_rst), .wrtEn(addr_inc));*/
 
 
 //////////////////////////////////////////
@@ -87,6 +96,8 @@ dff_2 FSM_state(.D(nxt_state), .Q(state), .WE(1'b1), .clk(clk), .rst(rst));
 // Next State Combination Logic
 always@(*) begin
     nxt_state = IDLE;
+    addr_I_rst = 0;
+    addr_D_rst = 0;
     Stall = 1'b0;
     EN_M = 1'b0;
     cntr_inc = 1'b0;
@@ -103,6 +114,8 @@ always@(*) begin
                         (!Miss_I&Miss_D) ? WAIT_D : IDLE;
             Stall = Miss_I | Miss_D | stall_cache;
             cntr_rst = 1;
+            addr_rst = 1;
+            addr_I_rst = 1;
             //EN_M = Miss_I | Miss_D;
         end
 
@@ -111,6 +124,9 @@ always@(*) begin
                         (Miss_D&cntr_full)  ? WAIT_D : WAIT_I;
             Stall = 1'b1;
             EN_M = (Miss_D&cntr_full) ? 1 : !cntr_half;
+            cntr_rst = (Miss_D&cntr_full);
+            addr_D_rst = (Miss_D&cntr_full);
+            addr_rst = (Miss_D&cntr_full);
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
             Data_WE = DataVLD;
