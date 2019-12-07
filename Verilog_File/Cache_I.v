@@ -131,11 +131,17 @@ assign Right_M_IN   = Hit_Right? {{2'h3},{TAG[5:0]}}:               // hit right
                       {{1'b0},{Left_M_OUT[6:0]}};                   // miss but replace the left, or hit left? change LRU to 0!;
 
 // Metadata write logic
-Register_1 Left_ME_REG(.Q(Left_M_WE_OUT), .D(stall_D?1'b0:Left_M_WE_IN), .clk(clk), .rst(rst), .wrtEn(1'b1));
-Register_1 Right_ME_REG(.Q(Right_M_WE_OUT), .D(stall_D?1'b0:Right_M_WE_IN), .clk(clk), .rst(rst), .wrtEn(1'b1));
+wire temp0;
+wire temp1;
+assign temp0 =stall_I?1'b0:Left_M_WE_IN;
+assign temp1 = stall_I?1'b0:Right_M_WE_IN;
+Register_1 Left_ME_REG(.Q(Left_M_WE_OUT), .D(temp0), .clk(clk), .rst(rst), .wrtEn(1'b1));
+Register_1 Right_ME_REG(.Q(Right_M_WE_OUT), .D(temp1), .clk(clk), .rst(rst), .wrtEn(1'b1));
 Register_16 META_REG(.Q({{Left_M_REG_OUT},{Right_M_REG_OUT}}), .D({{Left_M_IN},{Right_M_IN}}), .clk(clk), 
 .rst(rst), .wrtEn(1'b1));
-Register_16 META_BE_REG(.Q({{10'h0},{SET_STALLED}}), .D({{10'h0},{SET}}), .clk(clk), 
+wire [15:0] temp2;
+assign temp2 = {{10'h0},{SET}};
+Register_16 META_BE_REG(.Q({{10'h0},{SET_STALLED}}), .D(temp2), .clk(clk), 
 .rst(rst), .wrtEn(1'b1));
 
 assign stall_I = (Left_M_WE&Hit_Left)|(Right_M_WE&Hit_Right);       // if one side both hit and
