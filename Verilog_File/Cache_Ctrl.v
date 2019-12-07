@@ -96,11 +96,12 @@ always@(*) begin
     IDLE_FSM = 1'b0;
     cntr_rst = 0;
     case(state)
-        IDLE: begin //IDLE
+        IDLE: begin
             IDLE_FSM = 1'b1;
-            nxt_state = stall_cache? WAIT_WB:Miss_I ? {{WAIT_I}} : 
-                        (!Miss_I&Miss_D) ? {{WAIT_D}} : IDLE;
-            Stall = Miss_I | Miss_D;
+            nxt_state = stall_cache ? WAIT_WB : 
+                        Miss_I ? WAIT_I : 
+                        (!Miss_I&Miss_D) ? WAIT_D : IDLE;
+            Stall = Miss_I | Miss_D | stall_cache;
             cntr_rst = 1;
             //EN_M = Miss_I | Miss_D;
         end
@@ -128,7 +129,6 @@ always@(*) begin
 
         WAIT_WB : begin
             nxt_state = IDLE;
-            Stall = 1'b1;
         end
     endcase
 
