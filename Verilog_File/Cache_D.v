@@ -1,5 +1,6 @@
 module Cache_D (clk,rst_n,DataIn_FSM,DataIn_CPU,DataOut_CPU,Miss,Addr_CPU,Addr_FSM,
-MetaData_WE,Data_WE,R,W);
+MetaData_WE,Data_WE,R,W,stall_D);
+output stall_D;
 input clk;                      // clock
 input rst_n;                    // active low reset
 input [15:0] Addr_CPU;          // Address that cpu snet to cache to do the read&write
@@ -15,6 +16,7 @@ input Data_WE;                  // Data write enable from FSM
 output [15:0] DataOut_CPU;      // Dataoutput that CPU can see
 output Miss;                    // Miss signal sent to FSM
 
+assign stall_D = Left_M_WE|Left_D_WE|Right_W_WE|Right_D_WE;
 /// internal wires
 wire rst;                       
 wire Left_D_WE;                 
@@ -47,7 +49,7 @@ wire[7:0]  Left_M_IN;
 wire[7:0]  Left_M_OUT;
 wire[7:0]  Left_M_REG_OUT;
 wire[127:0]Left_M_BE;
-MetaDataArray  Left_M (.clk(clk), .rst(rst), .DataIn(Left_M_REG_OUT),  .Write(Left_M_WE), 
+MetaDataArray  Left_M (.clk(clk), .rst(rst), .DataIn(Left_M_REG_OUT),  .Write(Left_M_WE_OUT), 
 .BlockEnable(Left_M_BE), .DataOut(Left_M_OUT_RES));
 
 // right metadata
@@ -55,7 +57,7 @@ wire[7:0]  Right_M_IN;
 wire[7:0]  Right_M_OUT;
 wire[7:0]  Right_M_REG_OUT;
 wire[127:0]Right_M_BE;
-MetaDataArray  Light_M(.clk(clk), .rst(rst), .DataIn(Right_M_REG_OUT), .Write(Right_M_WE), 
+MetaDataArray  Light_M(.clk(clk), .rst(rst), .DataIn(Right_M_REG_OUT), .Write(Right_M_WE_OUT), 
 .BlockEnable(Right_M_BE), .DataOut(Right_M_OUT));
 
 // Miss Detection wires
@@ -100,8 +102,8 @@ assign Right_TAG_RD = Right_M_OUT[5:0];
 // Check if hit.
 wire Hit_Left;
 wire Hit_Right; 
-assign Hit_Left  = ((TAG == Left_TAG_RD )&(Left_VLD));
-assign Hit_Right = ((TAG == Right_TAG_RD)&(Right_VLD));
+assign Hit_Left  = Left_M_WE_OUT?  1'b0:((TAG == Left_TAG_RD )&(Left_VLD));
+assign Hit_Right = Right_M_WE_OUT? 1'b0:((TAG == Right_TAG_RD)&(Right_VLD));
 assign Miss = (R|W)&(!(Hit_Left|Hit_Right));        // miss if:
                                                     // there is an read/write operation and
                                                     // not found in cache.
@@ -119,8 +121,8 @@ assign Left_D_WE    = (Data_WE|(Hit_Left  & W))? GoLeft:1'b0;       // write to 
 assign Right_D_WE   = (Data_WE|(Hit_Right & W))?!GoLeft:1'b0;       // Cache write hit, or fsm require write
 
 // Metadata write logic
-assign Left_M_WE    = MetaData_WE|Hit;                              // always update both metadata if needed
-assign Right_M_WE   = MetaData_WE|Hit;                              // update if FSM ask so or on cache hit.
+assign Left_M_WE_IN    = MetaData_WE|Hit;                              // always update both metadata if needed
+assign Right_M_WE_IN   = MetaData_WE|Hit;                              // update if FSM ask so or on cache hit.
 assign Left_M_IN    = Hit_Left? {{2'h3},{TAG[5:0]}}:                // hit left? update the VLD and LRU!
                       (GoLeft&!Hit_Right)?   {{2'h3},{TAG[5:0]}}:   // miss but replace left? update TAG,VLD and LRU!;
                       {{1'b0},{Left_M_OUT[6:0]}};                   // miss but replace the right, or hit right? change LRU to 0!;

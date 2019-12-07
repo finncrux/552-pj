@@ -1,5 +1,6 @@
 module Cache_I (clk,rst_n,DataIn_FSM,DataOut_CPU,Miss,Addr_CPU,Addr_FSM,
-MetaData_WE,Data_WE,R);
+MetaData_WE,Data_WE,R,stall_I);
+output stall_I;
 input clk;                      // clock
 input rst_n;                    // active low reset
 input [15:0] Addr_CPU;          // Address that cpu snet to cache to do the read&write
@@ -96,8 +97,8 @@ assign Right_TAG_RD = Right_M_OUT[5:0];
 // Check if hit.
 wire   Hit_Left;
 wire   Hit_Right; 
-assign Hit_Left  = ((TAG == Left_TAG_RD )&(Left_VLD));
-assign Hit_Right = ((TAG == Right_TAG_RD)&(Right_VLD));
+assign Hit_Left  = Left_M_WE_OUT? 1'b0 :((TAG == Left_TAG_RD )&(Left_VLD));
+assign Hit_Right = Right_M_WE_OUT? 1'b0 :((TAG == Right_TAG_RD)&(Right_VLD));
 assign Miss = (!(Hit_Left|Hit_Right));          // miss if:
                                                     // there is an read operation and
                                                     // not found in cache.
