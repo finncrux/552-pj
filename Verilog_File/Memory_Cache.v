@@ -9,12 +9,14 @@ wire        rst, W, R;
 assign rst = !rst_n;
 assign W = opcode == 4'b1001;
 assign R = opcode == 4'b1000;
+
 wire [15:0]     D_data_in_FSM,I_data_in_FSM, D_addr_FSM, I_addr_FSM, Data_out_mem;
 wire [15:0]     Addr_mem_FSM;
 wire            D_miss, I_miss, D_md_en_FSM, I_md_en_FSM, D_d_en_FSM, I_d_en_FSM,stall_D,stall_I;
 wire            stall_cache;
 assign          stall_cache = stall_D | stall_I;
 wire            data_valid_m, enable_mem_FSM, IDLE_FSM;
+
 Cache_D DATA_cache(.clk(clk), .rst_n(rst_n), .DataIn_FSM(D_data_in_FSM), .DataIn_CPU(D_Data_in), .DataOut_CPU(D_Data_out), .Miss(D_miss),
                     .Addr_CPU(Data_addr), .Addr_FSM(D_addr_FSM), .MetaData_WE(D_md_en_FSM), .Data_WE(D_d_en_FSM) , .R(R), .W(W),
                     .stall_D(stall_D));
