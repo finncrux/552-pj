@@ -22,8 +22,9 @@ wire Left_D_WE;
 wire Right_D_WE;
 wire Left_M_WE;
 wire Right_M_WE;
+wire Request;
 assign rst = !rst_n;
-
+assign Request = R|W;
 wire Left_M_WE_OUT;
 wire Right_M_WE_OUT;
 
