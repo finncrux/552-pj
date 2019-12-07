@@ -6,6 +6,7 @@ output hlt;
 output[15:0] pc;
 wire Stall_FSM;
 wire Stall;             //From Hazard Detection
+wire Stall_rigid;
 wire Flush;             //From Hazard Detection
 wire NotCacheStall;
 assign NotCacheStall = !Stall_FSM;//!stall;
@@ -47,7 +48,8 @@ addsub_16bit PC_adder(.A(PC_Reg_OUT), .B(16'h0002), .Sum(PC_2), .sub(1'b0),.Ovfl
 
 
 //Instruction Memory
-
+// I/O Expose Data
+wire [15:0] MemRead_Data_WB, MemAddr_WB;
 
 
 ////////////////////////////////////////////
@@ -292,18 +294,17 @@ Register_16 MemWrt_Data_mem(.D(MemWrt_Data), .Q(MemWrt_Data_WB), .clk(clk), .rst
 //I/O Expose Control
 wire [3:0] ALUOp_WB;
 wire RegDst_WB;    //EX
-wire MemRead_WB, MemWrt_WB;   //M
+wire MemRead_WB,MemRead_WB_temp, MemWrt_WB;   //M
 wire MemToReg_WB;  //WB
 wire halt_WB;
-// I/O Expose Data
-wire [15:0] MemRead_Data_WB, MemAddr_WB;
+assign MemRead_WB = MemRead_WB_temp&NotCacheStall;
 
 // Control Reg EX
 Register_4 ALUOp_mem(.D(ALUOp_MEM), .Q(ALUOp_WB), .clk(clk), .rst(!rst_n), .wrtEn(NotCacheStall));
 Register_1 RegDst_mem(.D(RegDst_MEM), .Q(RegDst_WB), .clk(clk), .rst(!rst_n), .wrtEn(NotCacheStall));
 
 // Control Reg M
-Register_1 MemRead_mem(.D(MemRead_MEM), .Q(MemRead_WB), .clk(clk), .rst(!rst_n), .wrtEn(NotCacheStall));
+Register_1 MemRead_mem(.D(MemRead_MEM), .Q(MemRead_WB_temp), .clk(clk), .rst(!rst_n), .wrtEn(NotCacheStall));
 Register_1 MemWrite_mem(.D(MemWrt_MEM), .Q(MemWrt_WB), .clk(clk), .rst(!rst_n), .wrtEn(NotCacheStall));
 
 // Control Reg WB
@@ -386,8 +387,9 @@ assign LtoU_B = ((OPCODE1 == 4'b1101)&(Rs_ID==Rd_EX));
 assign LtoU_B2 = ((OPCODE1 == 4'b1101)&(Rs_ID==Rd_MEM));
 assign LD_EX = (ID_EX_opocode == 4'b1000);
 assign LD_MEM = (EX_MEM_opocode == 4'b1000);
-assign Stall =  (LD_EX & LtoU_NB) | (LD_EX & LtoU_B) | (LD_MEM & LtoU_B2);  // the ID stage needs the loaded data
+assign Stall =  NotCacheStall&(LD_EX & LtoU_NB) | (LD_EX & LtoU_B) | (LD_MEM & LtoU_B2);  // the ID stage needs the loaded data
                 // RT is actually used and no forwarding here.
-                
+assign Stall_rigid =(LD_EX & LtoU_NB) | (LD_EX & LtoU_B) | (LD_MEM & LtoU_B2);  // the ID stage needs the loaded data
+     
 assign Branch_Hazard = Taken&Branch;
 endmodule

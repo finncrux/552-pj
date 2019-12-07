@@ -22,13 +22,14 @@ output          DataArray_WE_D;
 output          MetaDataArray_WE_D;
 
 input   [15:0]  DataIn_M;
-input           DataVLD;
+input            DataVLD;
 output  [15:0]  Addr_M;
 output  reg     EN_M;           //Ctrl
 output  reg     IDLE_FSM;       //Ctrl
 output  reg     Stall;          //Ctrl
 input           clk, rst;
 
+wire Data_VLD,cntr_lt4;
 wire rst_n;
 assign rst_n = !rst;
 // Next State Flop
@@ -73,12 +74,20 @@ wire cntr_full,cntr_half;
 wire[3:0]   cnt, cnt_after;
 assign cntr_full = cnt == 4'b0111;
 assign cntr_half = cnt == 4'b0100;
+wire[3:0] cnt2;
+wire[3:0] cnt2_after;
+reg       cntr2_rst;
+assign cntr_lt4 = ((cnt2 == 4'h0)|(cnt2 == 4'h1)|(cnt2 == 4'h2)|(cnt2 == 4'h3));
+assign Data_VLD = DataVLD & !cntr_lt4;
 
 Register_4 current_block(.Q(cnt), .D(cnt_after), .clk(clk), .rst(!rst_n | cntr_rst), .wrtEn(cntr_inc));
+Register_4 current_clk  (.Q(cnt2), .D(cnt2_after), .clk(clk), .rst(!rst_n | cntr2_rst), .wrtEn(1'b1));
+
 CLA_4bit blocks8(.A(cntr_rst? 4'b0000 : cnt), .B({3'b000,!cntr_full}), 
                     .Cin(1'b0), .S(cnt_after), .G( ), .P( ), .Ovfl( ), .Cout( ));
 
-
+CLA_4bit blocks9(.A(cntr2_rst? 4'b0000 : cnt2), .B(4'h1), 
+                    .Cin(1'b0), .S(cnt2_after), .G( ), .P( ), .Ovfl( ), .Cout( ));
 
 //////////////////////////////////////////
 // FSM
@@ -105,6 +114,7 @@ always@(*) begin
     MetaData_WE = 1'b0;
     IDLE_FSM = 1'b0;
     cntr_rst = 0;
+    cntr2_rst = 0;
     case(state)
         IDLE: begin
             IDLE_FSM = 1'b1;
@@ -118,6 +128,7 @@ always@(*) begin
             addr_D_rst = 1;
             addr_inc = Miss_I | Miss_D;
             //EN_M = Miss_I | Miss_D;
+            cntr2_rst = 1;
         end
 
         WAIT_I: begin
@@ -125,12 +136,13 @@ always@(*) begin
                         (Miss_D&cntr_full)  ? WAIT_D : WAIT_I;
             Stall = 1'b1;
             EN_M = (Miss_D&cntr_full) ? 1 : !cntr_half;
-            cntr_rst = (Miss_D&cntr_full);
+            cntr_rst  = (Miss_D&cntr_full);
+            cntr2_rst = (Miss_D&cntr_full);
             addr_D_rst = (Miss_D&cntr_full);
             //addr_rst = (Miss_D&cntr_full);
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
-            Data_WE = DataVLD;
+            Data_WE = DataVLD&!cntr_lt4;
             MetaData_WE = !Miss_D&cntr_full;
         end
 
@@ -140,7 +152,7 @@ always@(*) begin
             EN_M = !cntr_half;
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
-            Data_WE = DataVLD;
+            Data_WE = DataVLD&!cntr_lt4;
             MetaData_WE = cntr_full;
         end
 
