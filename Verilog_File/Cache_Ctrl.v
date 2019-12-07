@@ -1,5 +1,5 @@
 module Cache_Ctrl(DataOut_I, DataArray_WE_I, MetaDataArray_WE_I, Miss_I, Addr_I, Addr_Miss_I,
-                    DataIn_D, DataOut_D, DataArray_WE_D, MetaDataArray_WE_D, Miss_D, Addr_D, Addr_Miss_D, R, W, 
+                    DataOut_D, DataArray_WE_D, MetaDataArray_WE_D, Miss_D, Addr_D, Addr_Miss_D, R, W, 
                     DataIn_M, DataVLD, Addr_M, EN_M, clk, rst, Stall, IDLE_FSM);
 
 //////////////////////////////////////////
@@ -12,7 +12,6 @@ output  [15:0]  Addr_Miss_I;
 output          DataArray_WE_I;
 output          MetaDataArray_WE_I;
 
-input   [15:0]  DataIn_D;
 input   [15:0]  Addr_D;
 input           Miss_D;
 input           R, W;
@@ -29,6 +28,8 @@ output  reg     IDLE_FSM;       //Ctrl
 output  reg     Stall;          //Ctrl
 input           clk, rst;
 
+wire rst_n;
+assign rst_n = !rst;
 // Next State Flop
 wire [1:0] state;
 reg  [1:0] nxt_state;
@@ -63,7 +64,7 @@ assign cntr_half = cnt == 4'b0100;
 
 Register_4 current_block(.Q(cnt), .D(cnt_after), .clk(clk), .rst(!rst_n | cntr_rst), .wrtEn(cntr_inc));
 CLA_4bit blocks8(.A(cntr_rst? 4'b0000 : cnt), .B({3'b000,!cntr_full}), 
-                    .Cin(4'b0000), .S(cnt_after), .G( ), .P( ), .Ovfl( ), .Cout( ));
+                    .Cin(1'b0), .S(cnt_after), .G( ), .P( ), .Ovfl( ), .Cout( ));
 
 
 
@@ -93,8 +94,8 @@ always@(*) begin
     case(state)
         IDLE: begin //IDLE
             IDLE_FSM = 1'b1;
-            nxt_state = Miss_I ? WAIT_I : 
-                        (!Miss_I&Miss_D) ? WAIT_D : IDLE;
+            nxt_state = Miss_I ? {{1'b0},{WAIT_I}} : 
+                        (!Miss_I&Miss_D) ? {{1'b0},{WAIT_D}} : IDLE;
             Stall = Miss_I | Miss_D;
             //EN_M = Miss_I | Miss_D;
         end
