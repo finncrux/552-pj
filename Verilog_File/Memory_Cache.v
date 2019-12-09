@@ -27,6 +27,8 @@ Cache_I Inst_cache(.clk(clk), .rst_n(rst_n), .DataIn_FSM(I_data_in_FSM), .DataOu
 wire MEM_WE;
 wire MEM_RD;
 wire [15:0]MEM_ADDR;
+wire RD_TRUE;
+assign RD_TRUE = MEM_RD & (I_d_en_FSM|D_d_en_FSM);
 assign MEM_ADDR = (W&IDLE_FSM)?Data_addr:Addr_mem_FSM;
 assign MEM_WE = IDLE_FSM & W;
 assign MEM_RD = enable_mem_FSM | (W & IDLE_FSM);
