@@ -1,0 +1,16 @@
+	LLB R1, 0x01
+	LLB R2, 0x80
+	SW R1, R2, 0
+	LLB R3, 0x03
+	LHB R2, 0x04
+LOOP: SW R3, R2, 0
+	SUB R3, R3, R1
+	B 010, LOOP
+	LW R5, R2, 0
+	LHB R2, 0xF4
+	SW R1, R2, 0
+	RED R6, R2, R2
+	LHB R2, 0x00
+	LW R7, R2, 0
+	SW R7, R2, 0
+	HLT

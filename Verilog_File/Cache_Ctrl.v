@@ -73,7 +73,7 @@ wire cntr_full,cntr_half;
 // Internal Wire
 wire[3:0]   cnt, cnt_after;
 assign cntr_full = cnt == 4'b0111;
-assign cntr_half = cnt == 4'b0100;
+assign cntr_half = (cnt == 4'b0011) | (cnt == 4'b0000) | (cnt == 4'b0001) | (cnt == 4'b0010);
 wire[3:0] cnt2;
 wire[3:0] cnt2_after;
 reg       cntr2_rst;
@@ -135,24 +135,24 @@ always@(*) begin
             nxt_state = (!Miss_D&cntr_full) ? WAIT_WB :
                         (Miss_D&cntr_full)  ? WAIT_D : WAIT_I;
             Stall = 1'b1;
-            EN_M = (Miss_D&cntr_full) ? 1 : !cntr_half;
+            EN_M = !cntr_lt4;
             cntr_rst  = (Miss_D&cntr_full);
             cntr2_rst = (Miss_D&cntr_full);
             addr_D_rst = (Miss_D&cntr_full);
             //addr_rst = (Miss_D&cntr_full);
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
-            Data_WE = DataVLD&!cntr_lt4;
+            Data_WE = DataVLD&(!cntr_lt4);
             MetaData_WE = !Miss_D&cntr_full;
         end
 
         WAIT_D: begin // WAIT_D
             nxt_state = cntr_full ? WAIT_WB : WAIT_D;
             Stall = 1'b1;
-            EN_M = !cntr_half;
+            EN_M = !cntr_lt4;
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
-            Data_WE = DataVLD&!cntr_lt4;
+            Data_WE = DataVLD&(!cntr_lt4);
             MetaData_WE = cntr_full;
         end
 
