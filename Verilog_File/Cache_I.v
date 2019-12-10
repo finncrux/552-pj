@@ -52,7 +52,7 @@ wire[7:0]  Right_M_IN;
 wire[7:0]  Right_M_OUT;
 wire[7:0]  Right_M_REG_OUT;
 wire[127:0]Right_M_BE;
-MetaDataArray  Light_M(.clk(clk), .rst(rst), .DataIn(Right_M_REG_OUT), .Write(Right_M_WE_OUT), 
+MetaDataArray  Right_M(.clk(clk), .rst(rst), .DataIn(Right_M_REG_OUT), .Write(Right_M_WE_OUT), 
 .BlockEnable(Right_M_BE), .DataOut(Right_M_OUT));
 
 // Miss Detection wires

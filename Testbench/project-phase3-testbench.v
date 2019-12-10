@@ -172,7 +172,7 @@ module cpu_ptb();
    // Is processor halted (1 bit signal)
    
 
-   assign Inst = DUT.Instr_WB;
+   assign Inst = DUT.Instr_IF&{16{DUT.NotCacheStall}};
    //Instruction fetched in the current cycle
    
    assign RegWrite = DUT.RegWrt;
@@ -184,7 +184,7 @@ module cpu_ptb();
    assign WriteData = DUT.RegWrt_Data_WB;
    // If above is true, this should hold the Data being written to the register. (16 bits)
    
-   assign MemRead =  DUT.MEM_CACHE.RD_TRUE & (! MemWrite);
+   assign MemRead =  DUT.MEM_CACHE.MEM_RD;
    // Is memory being read from, in this cycle. one bit signal (1 means yes, 0 means no)
    
    assign MemWrite = DUT.MEM_CACHE.MEM_WE;//!DUT.MemRead_WB & DUT.MemWrt_WB;

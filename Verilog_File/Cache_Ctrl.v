@@ -1,6 +1,6 @@
 module Cache_Ctrl(DataOut_I, DataArray_WE_I, MetaDataArray_WE_I, Miss_I, Addr_I, Addr_Miss_I,
                     DataOut_D, DataArray_WE_D, MetaDataArray_WE_D, Miss_D, Addr_D, Addr_Miss_D, R, W, 
-                    DataIn_M, DataVLD, Addr_M, EN_M, clk, rst, Stall, IDLE_FSM,stall_cache);
+                    DataIn_M, DataVLD, Addr_M, EN_M, clk, rst, Stall, IDLE_FSM,stall_cache,Idle_DontWrt);
 
 //////////////////////////////////////////
 // Ports
@@ -12,7 +12,6 @@ output  [15:0]  DataOut_I;
 output  [15:0]  Addr_Miss_I;
 output          DataArray_WE_I;
 output          MetaDataArray_WE_I;
-
 input   [15:0]  Addr_D;
 input           Miss_D;
 input           R, W;
@@ -20,7 +19,7 @@ output  [15:0]  DataOut_D;
 output  [15:0]  Addr_Miss_D;
 output          DataArray_WE_D;
 output          MetaDataArray_WE_D;
-
+output          Idle_DontWrt;
 input   [15:0]  DataIn_M;
 input            DataVLD;
 output  [15:0]  Addr_M;
@@ -55,7 +54,6 @@ assign addr_after = (addr_D_rst|addr_I_rst) ? (addr_I_rst? addr_base_I : addr_ba
 addsub_16bit Addr_adder_M(.A(addr), .B(16'h2), .sub(1'b0), .Sum(addr_out), .Ovfl( ));
 addsub_16bit Addr_adder_C(.A(addr), .B(16'h8), .sub(1'b1), .Sum(Addr_C), .Ovfl( ));
 Register_16 Addr_reg1(.Q(addr), .D(addr_after), .clk(clk), .rst(!rst_n), .wrtEn(addr_inc));
-
 /*
 Register_16 Addr_reg2(.Q(addr_after2), .D(addr), .clk(clk), .rst(!rst_n|addr_rst), .wrtEn(addr_inc));
 Register_16 Addr_reg3(.Q(addr_after3), .D(addr_after2), .clk(clk), .rst(!rst_n|addr_rst), .wrtEn(addr_inc));
@@ -99,10 +97,13 @@ localparam WAIT_I = 2'b01;
 localparam WAIT_D = 2'b10;
 localparam WAIT_WB= 2'b11;
 
+reg  Idle_NOWRT;
 dff_2 FSM_state(.D(nxt_state), .Q(state), .WE(1'b1), .clk(clk), .rst(rst));
+Register_1  reg1(.Q(Idle_DontWrt),.D(Idle_NOWRT),.clk(clk),.rst(rst),.wrtEn(1'b1));
 
 // Next State Combination Logic
 always@(*) begin
+    Idle_NOWRT = 0;
     nxt_state = IDLE;
     addr_I_rst = 0;
     addr_D_rst = 0;
@@ -118,6 +119,7 @@ always@(*) begin
     case(state)
         IDLE: begin
             IDLE_FSM = 1'b1;
+            Idle_NOWRT = 0;
             nxt_state = stall_cache ? WAIT_WB : 
                         Miss_I ? WAIT_I : 
                         (!Miss_I&Miss_D) ? WAIT_D : IDLE;
@@ -127,7 +129,7 @@ always@(*) begin
             addr_I_rst = !(!Miss_I&Miss_D);
             addr_D_rst = 1;
             addr_inc = Miss_I | Miss_D;
-            //EN_M = Miss_I | Miss_D;
+            EN_M = W;
             cntr2_rst = 1;
         end
 
@@ -135,7 +137,7 @@ always@(*) begin
             nxt_state = (!Miss_D&cntr_full) ? WAIT_WB :
                         (Miss_D&cntr_full)  ? WAIT_D : WAIT_I;
             Stall = 1'b1;
-            EN_M = !cntr_lt4;
+            EN_M = cntr_half;
             cntr_rst  = (Miss_D&cntr_full);
             cntr2_rst = (Miss_D&cntr_full);
             addr_D_rst = (Miss_D&cntr_full);
@@ -143,13 +145,13 @@ always@(*) begin
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
             Data_WE = DataVLD&(!cntr_lt4);
-            MetaData_WE = !Miss_D&cntr_full;
+            MetaData_WE = cntr_full;
         end
 
         WAIT_D: begin // WAIT_D
             nxt_state = cntr_full ? WAIT_WB : WAIT_D;
             Stall = 1'b1;
-            EN_M = !cntr_lt4;
+            EN_M = cntr_half;
             cntr_inc = DataVLD;
             addr_inc = 1'b1;
             Data_WE = DataVLD&(!cntr_lt4);
@@ -159,7 +161,7 @@ always@(*) begin
         WAIT_WB : begin
             nxt_state = IDLE;
             Stall = 1'b1;
-            
+            Idle_NOWRT = 0;
         end
     endcase
 

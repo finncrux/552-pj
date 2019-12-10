@@ -24,19 +24,20 @@ Cache_D DATA_cache(.clk(clk), .rst_n(rst_n), .DataIn_FSM(D_data_in_FSM), .DataIn
 Cache_I Inst_cache(.clk(clk), .rst_n(rst_n), .DataIn_FSM(I_data_in_FSM), .DataOut_CPU(I_Data_out), .Miss(I_miss), .Addr_CPU(I_addr),
                     .Addr_FSM(I_addr_FSM), .MetaData_WE(I_md_en_FSM), .Data_WE(I_d_en_FSM),.stall_I(stall_I));
 
+wire Idle_DontWrt;
 wire MEM_WE;
 wire MEM_RD;
 wire [15:0]MEM_ADDR;
 wire RD_TRUE;
 assign RD_TRUE = MEM_RD & (I_d_en_FSM|D_d_en_FSM);
-assign MEM_ADDR = (W&IDLE_FSM)?Data_addr:Addr_mem_FSM;
-assign MEM_WE = IDLE_FSM & W;
-assign MEM_RD = enable_mem_FSM | (W & IDLE_FSM);
-memory4c Memory   (.data_out(Data_out_mem), .data_in(D_Data_in), .addr(MEM_ADDR), .enable(MEM_RD), .wr(MEM_WE), .clk(clk), .rst(rst), .data_valid(data_valid_m));
+assign MEM_ADDR = (MEM_WE)?Data_addr:Addr_mem_FSM;
+assign MEM_WE = IDLE_FSM & W & enable_mem_FSM;
+assign MEM_RD = enable_mem_FSM &(!(IDLE_FSM & W));
+memory4c Memory   (.data_out(Data_out_mem), .data_in(D_Data_in), .addr(MEM_ADDR), .enable(enable_mem_FSM), .wr(MEM_WE), .clk(clk), .rst(rst), .data_valid(data_valid_m));
 
 Cache_Ctrl Control(.DataOut_I(I_data_in_FSM), .DataArray_WE_I(I_d_en_FSM), .MetaDataArray_WE_I(I_md_en_FSM), .Miss_I(I_miss), .Addr_I(I_addr), 
                 .Addr_Miss_I(I_addr_FSM), .DataOut_D(D_data_in_FSM), .DataArray_WE_D(D_d_en_FSM), .MetaDataArray_WE_D(D_md_en_FSM), .Miss_D(D_miss), .Addr_D(Data_addr), 
                 .Addr_Miss_D(D_addr_FSM), .DataVLD(data_valid_m), .Addr_M(Addr_mem_FSM),.IDLE_FSM(IDLE_FSM), .EN_M(enable_mem_FSM), .clk(clk), .rst(rst), .Stall(Stall),
-                .R(R),.W(W),.DataIn_M(Data_out_mem),.stall_cache(stall_cache));
+                .R(R),.W(W),.DataIn_M(Data_out_mem),.stall_cache(stall_cache),.Idle_DontWrt(Idle_DontWrt));
 
 endmodule

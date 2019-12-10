@@ -14,3 +14,4 @@ LOOP: SW R3, R2, 0
 	LW R7, R2, 0
 	SW R7, R2, 0
 	HLT
+

@@ -92,7 +92,7 @@ wire ovfl, ovfl1;
 wire [7:0]I;
 wire halt_ID;
 wire Branch;
-assign IF_Flush = Taken & Branch;
+assign IF_Flush = Taken & Branch & NotCacheStall;
 //assign C= Instr_ID[11:9];
 assign Taken = (C[2:0]==3'b000)?!F[2]:
                (C[2:0]==3'b001)?F[2]:
@@ -212,8 +212,8 @@ assign WriteEnableN =!(|ALUOp_EX[3:1]);
 assign WriteEnableZ = WriteEnableN|(ALUOp_EX==4'b0010)|(ALUOp_EX==4'b0100)|(ALUOp_EX==4'b0101)|(ALUOp_EX==4'b0110);
 assign WriteEnableV =!(|ALUOp_EX[3:1]);
 wire [2:0] Flag_REG_OUT;
-Register_3 FLAGREG(.Q(Flag_REG_OUT),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN),
-                    .WriteEnableZ(WriteEnableZ),.WriteEnableV(WriteEnableV));
+Register_3 FLAGREG(.Q(Flag_REG_OUT),.D(FlagFromAlu),.clk(clk),.rst(!rst_n),.WriteEnableN(WriteEnableN&NotCacheStall),
+                    .WriteEnableZ(WriteEnableZ&NotCacheStall),.WriteEnableV(WriteEnableV&NotCacheStall));
 assign F = {{!WriteEnableZ?Flag_REG_OUT[2]:FlagFromAlu[2]},{!WriteEnableV?Flag_REG_OUT[1]:FlagFromAlu[1]},{!WriteEnableN?Flag_REG_OUT[0]:FlagFromAlu[0]}};
 ////////////////////////////////////////////
 // EX/MEM Reg ////////////////////////////// OK

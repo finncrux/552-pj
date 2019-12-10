@@ -82,11 +82,11 @@ assign Left_D_BE  = BLOCK_EN;           // if write to metadata, need update bot
 // Metadata wires
 wire        Left_VLD;                   // Metadata read from left way                  
 wire        Left_LRU; 
-wire[6:0]   Left_TAG_RD;
+wire[5:0]   Left_TAG_RD;
 
 wire        Right_VLD;                  // Metadata read from right way
 wire        Right_LRU; 
-wire[6:0]   Right_TAG_RD;
+wire[5:0]   Right_TAG_RD;
 
 //////////////////////////////////////////
 // Metadata format:
